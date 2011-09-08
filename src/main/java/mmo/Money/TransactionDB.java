@@ -42,4 +42,44 @@ public class TransactionDB {
 	String reason;
 	@NotNull
 	Timestamp onDate;
+
+	public long getAmount() {
+		return amount;
+	}
+
+	public void setAmount(long amount) {
+		this.amount = amount;
+	}
+
+	public String getFromAccount() {
+		return fromAccount;
+	}
+
+	public void setFromAccount(String fromAccount) {
+		this.fromAccount = fromAccount;
+	}
+
+	public Timestamp getOnDate() {
+		return onDate;
+	}
+
+	public void setOnDate(Timestamp onDate) {
+		this.onDate = onDate;
+	}
+
+	public String getReason() {
+		return reason;
+	}
+
+	public void setReason(String reason) {
+		this.reason = reason;
+	}
+
+	public String getToAccount() {
+		return toAccount;
+	}
+
+	public void setToAccount(String toAccount) {
+		this.toAccount = toAccount;
+	}
 }
