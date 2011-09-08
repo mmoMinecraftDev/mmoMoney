@@ -16,6 +16,7 @@
  */
 package mmo.Money;
 
+import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 import java.security.Timestamp;
@@ -31,14 +32,17 @@ public class TransactionDB {
 	int id;
 	@NotNull
 	@NotEmpty
+	@Length(max=128)
 	String fromAccount;
 	@NotNull
 	@NotEmpty
+	@Length(max=128)
 	String toAccount;
 	@NotNull
 	@NotEmpty
 	long amount;
 	@NotNull
+	@Length(max=256)
 	String reason;
 	@NotNull
 	Timestamp onDate;
