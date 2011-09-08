@@ -5,8 +5,6 @@
 package mmo.Money;
 
 import com.avaje.ebean.EbeanServer;
-import java.sql.Statement;
-import java.sql.SQLException;
 import java.util.HashMap;
 import org.bukkit.Server;
 
