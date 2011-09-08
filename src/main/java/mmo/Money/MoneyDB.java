@@ -16,7 +16,7 @@
  */
 package mmo.Money;
 
-import com.avaje.ebean.EbeanServer;
+import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 import javax.persistence.Entity;
@@ -30,6 +30,7 @@ public class MoneyDB {
 	@Id
 	@NotNull
 	@NotEmpty
+	@Length(max=128)
 	private String owner;
 	@NotEmpty
 	private long amount;
