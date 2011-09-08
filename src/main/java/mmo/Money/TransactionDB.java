@@ -18,6 +18,7 @@ package mmo.Money;
 
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
+import java.security.Timestamp;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -27,50 +28,18 @@ import javax.persistence.Table;
 public class TransactionDB {
 
 	@Id
+	int id;
 	@NotNull
 	@NotEmpty
-	private int transaction;
+	String fromAccount;
 	@NotNull
 	@NotEmpty
-	private String fromAccount;
+	String toAccount;
 	@NotNull
 	@NotEmpty
-	private String toAccount;
+	long amount;
 	@NotNull
-	@NotEmpty
-	private long amount;
-	private String reason;
-
-	public long getAmount() {
-		return amount;
-	}
-
-	public void setAmount(long amount) {
-		this.amount = amount;
-	}
-
-	public String getFromAccount() {
-		return fromAccount;
-	}
-
-	public void setFromAccount(String fromAccount) {
-		this.fromAccount = fromAccount;
-	}
-
-	public String getReason() {
-		return reason;
-	}
-
-	public void setReason(String reason) {
-		this.reason = reason;
-	}
-
-	public String getToAccount() {
-		return toAccount;
-	}
-
-	public void setToAccount(String toAccount) {
-		this.toAccount = toAccount;
-	}
-	
+	String reason;
+	@NotNull
+	Timestamp onDate;
 }
