@@ -19,10 +19,11 @@ package mmo.Money;
 import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
-import java.security.Timestamp;
+import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
 
 @Entity()
 @Table(name = "mmo_Transaction")
@@ -45,7 +46,10 @@ public class TransactionDB {
 	@Length(max=256)
 	String reason;
 	@NotNull
-	Timestamp onDate;
+	@Temporal(javax.persistence.TemporalType.DATE)
+	Date onDate;
+	@NotNull
+	boolean failed;
 
 	public long getAmount() {
 		return amount;
@@ -63,11 +67,11 @@ public class TransactionDB {
 		this.fromAccount = fromAccount;
 	}
 
-	public Timestamp getOnDate() {
+	public Date getOnDate() {
 		return onDate;
 	}
 
-	public void setOnDate(Timestamp onDate) {
+	public void setOnDate(Date onDate) {
 		this.onDate = onDate;
 	}
 
@@ -86,4 +90,13 @@ public class TransactionDB {
 	public void setToAccount(String toAccount) {
 		this.toAccount = toAccount;
 	}
+
+	public boolean isFailed() {
+		return failed;
+	}
+
+	public void setFailed(boolean failed) {
+		this.failed = failed;
+	}
+	
 }
