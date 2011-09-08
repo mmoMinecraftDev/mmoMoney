@@ -28,11 +28,10 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public void loadConfiguration(Configuration cfg) {
-		// TODO Auto-generated method stub
 	}
 
 	@Override
 	public void onDisable() {
 		super.onDisable();
-	}	
+	}
 }
