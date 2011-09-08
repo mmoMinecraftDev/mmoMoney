@@ -23,7 +23,7 @@ public class Money {
 	public Money(MMOMoney plugin) {
 		this.plugin = plugin;
 		this.server = plugin.getServer();
-		this.database = getDatabase();
+		this.database = plugin.getDatabase();
 	}
 
 	public MoneyDB getAccount(String user) {
