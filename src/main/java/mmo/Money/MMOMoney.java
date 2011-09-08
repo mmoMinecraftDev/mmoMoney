@@ -20,10 +20,17 @@ import mmo.Core.MMOPlugin;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
-
+	
+	private Money money;
+	private MoneyDBCleaner dbCleaner;
+	private int dbCleanerTask;
+	
 	@Override
 	public void onEnable() {
 		super.onEnable();
+		money = new Money(this);
+		dbCleaner = new MoneyDBCleaner(money);
+		money.server.getScheduler().scheduleAsyncRepeatingTask(this, dbCleaner, 1, 10);
 	}
 
 	@Override
@@ -32,6 +39,9 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public void onDisable() {
+		money.server.getScheduler().cancelTask(dbCleanerTask);
+		dbCleaner = null;
+		money = null;
 		super.onDisable();
 	}
 }
