@@ -129,12 +129,11 @@ public class util {
 
 	public static Object resizeArray(Object oldArray, int start, int length) {
 		int oldSize = java.lang.reflect.Array.getLength(oldArray);
-		start = Math.max(start,0);
-		length = start-Math.min((start+length), oldSize-1);
-		int newSize = length;
+		start = Math.min(Math.max(start,0), oldSize-1);
+		length = Math.max(Math.min(length, oldSize-start),1);
 		
 		Class elementType = oldArray.getClass().getComponentType();
-		Object newArray = java.lang.reflect.Array.newInstance(elementType, newSize);
+		Object newArray = java.lang.reflect.Array.newInstance(elementType, length);
 		
 		System.arraycopy(oldArray, start, newArray, 0, length);
 		return newArray;

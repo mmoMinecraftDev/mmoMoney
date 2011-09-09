@@ -51,13 +51,20 @@ public class Money {
 	}
 	
 	public MoneyDB getAccount(String owner) {
-		for (MoneyDB account2 : loadedAccounts.keySet()) {
-			if (account2.getOwner().equalsIgnoreCase(owner)) {
-				return loadAccount(account2);
+		for (MoneyDB loadedAccount : loadedAccounts.keySet()) {
+			if (loadedAccount.getOwner().equalsIgnoreCase(owner)) {
+				return loadAccount(loadedAccount);
 			}
 		}
-		MoneyDB account = database.find(MoneyDB.class).where().ieq("owner", owner).findUnique();
-		return loadAccount(account);
+		MoneyDB foundAccount = database.find(MoneyDB.class).where().ieq("owner", owner).findUnique();
+		if (foundAccount == null) {
+			MoneyDB createdAccount = new MoneyDB();
+			createdAccount.setOwner(owner);
+			createdAccount.setAmount(0);
+			return loadAccount(createdAccount);
+		} else {
+			return loadAccount(foundAccount);
+		}
 	}
 	
 	public MoneyDB getAccount(MoneyDB account) {

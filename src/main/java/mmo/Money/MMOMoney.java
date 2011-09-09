@@ -16,6 +16,8 @@
  */
 package mmo.Money;
 
+import java.util.ArrayList;
+import java.util.List;
 import mmo.Core.MMOPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -46,52 +48,63 @@ public class MMOMoney extends MMOPlugin {
 	public void onDisable() {
 		money.server.getScheduler().cancelTask(dbCleanerTask);
 		dbCleaner = null;
+		for (MoneyDB account : money.loadedAccounts.keySet()) {
+			money.saveAccount(account);
+		}
 		money = null;
 		super.onDisable();
+	}
+	
+	@Override
+	public List<Class<?>> getDatabaseClasses() {
+		List<Class<?>> list = new ArrayList<Class<?>>();
+		list.add(MoneyDB.class);
+		list.add(TransactionDB.class);
+		return list;
 	}
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String as, String[] args) {
 		args = util.reparseArgs(args);
 		if (args.length > 0) {
+			String[] newArgs = (String[])util.resizeArray(args, 1, args.length);
 			if (args[0].equals("get")) {
-				return onCommand_get(cs,cmd,as,(String[])util.resizeArray(args, 1, args.length));
+				return onCommand_get(cs,cmd,as,newArgs);
 			} else if (args[0].equals("set")) {
-				return onCommand_set(cs,cmd,as,(String[])util.resizeArray(args, 1, args.length));
+				return onCommand_set(cs,cmd,as,newArgs);
 			} else if (args[0].equals("take")) {
-				return onCommand_take(cs,cmd,as,(String[])util.resizeArray(args, 1, args.length));
+				return onCommand_take(cs,cmd,as,newArgs);
 			} else if (args[0].equals("give")) {
-				return onCommand_give(cs,cmd,as,(String[])util.resizeArray(args, 1, args.length));
+				return onCommand_give(cs,cmd,as,newArgs);
 			} else if (args[0].equals("info")) {
-				return onCommand_info(cs,cmd,as,(String[])util.resizeArray(args, 1, args.length));
+				return onCommand_info(cs,cmd,as,newArgs);
 			//} else if (args[0].equals("")) {
 			//	
 			}
 		} else {
 			cs.sendMessage(msgPrefix+"Syntax is /"+as+" get/set/take/give/info ...");
+			return true;
 		}
 		return false;
 	}
 	
 	public boolean onCommand_get(CommandSender cs, Command cmd, String as, String[] args) {
+		String getHeldTemplate = ChatColor.WHITE+"%s %s "+ChatColor.YELLOW+"%l"+ChatColor.WHITE+" Coin(s).";
+		String getAccount = (cs instanceof Player) ? ((Player)cs).getName() : "Server";
+		long getMoney = money.getAccount(getAccount).getAmount(); //Getting NPE here
 		if (args.length == 1) {
 			if (cs.hasPermission("mmoMoney.getholdings.other")) {
-				//ToDo
+				getAccount = args[1];
+				getMoney = money.getAccount(getAccount).getAmount();
+				this.sendMessage(true, cs, getHeldTemplate, getAccount, "has", getMoney);
 			} else {
-				//ToDo
+				this.sendMessage(true, cs, ChatColor.RED+"You are not allowed to do this!");
 			}
 		} else if (args.length == 0) {
-			if (cs instanceof Player) {
-				cs.sendMessage(msgPrefix+"You currently hold onto "+ChatColor.YELLOW+money.getAccountMoney(money.getAccount(((Player)cs).getName()))+ChatColor.WHITE+" Coin(s).");
-			} else {
-				cs.sendMessage(msgPrefix+"Syntax is /"+as+" get player");
-			}
+			this.sendMessage(true, cs, getHeldTemplate, "You", "have", getMoney);
 		} else {
-			if (cs instanceof Player) {
-				cs.sendMessage(msgPrefix+"Syntax is /"+as+" get (player)");
-			} else {
-				cs.sendMessage(msgPrefix+"Syntax is /"+as+" get player");
-			}
+			this.sendMessage(true, cs, "Syntax is /%s get (player)", as);
+			return true;
 		}
 		return false;
 	}

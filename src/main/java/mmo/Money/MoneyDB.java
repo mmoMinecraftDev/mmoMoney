@@ -32,6 +32,7 @@ public class MoneyDB {
 	@NotEmpty
 	@Length(max=128)
 	private String owner;
+	@NotNull
 	@NotEmpty
 	private long amount;
 

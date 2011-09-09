@@ -1,9 +1,14 @@
 name: mmoMoney
 main: mmo.Money.MMOMoney
-version: 1.2
+version: 0.1
 website: TO BE SET
 author: Xaymar <MichaelDirks@levelnull.de>
-softdepend: [Spout]
-description: Utility functions for mmo-minecraft
+depend: [mmoCore]
+
+description: mmoMoney
+
 commands:
-permissions:
+  money:
+    description: 
+    aliases: [con,coin,pouch,cash]
+    usage: /money 
