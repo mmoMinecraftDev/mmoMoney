@@ -20,7 +20,7 @@ public class MoneyDBCleaner implements Runnable {
 	@Override
 	public void run() {
 		//Save all loaded accounts & remove from memory if too old.
-		Date old = new Date(System.currentTimeMillis()-2592000000l);
+		Date old = new Date(System.currentTimeMillis()-3600000l);
 		for (MoneyDB account : money.loadedAccounts.keySet()) {
 			Date changed = money.loadedAccounts.get(account);
 			Date nextSave = (Date) changed.clone();

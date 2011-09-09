@@ -27,27 +27,30 @@ public class Money {
 	}
 
 	public MoneyDB loadAccount(MoneyDB account) {
+		/*MoneyDB foundAccount; //The fuck did I do here?
+		MoneyDB createdAccount;
 		if (!loadedAccounts.containsKey(account)) {
-			MoneyDB accountCheck = null;
-			for (MoneyDB account2 : loadedAccounts.keySet()) {
-				if (account2.getOwner().equalsIgnoreCase(account.getOwner())) {
-					accountCheck = account2;
-					break;
-				}
+			foundAccount = database.find(MoneyDB.class).where().ieq("owner", account.getOwner()).findUnique();
+			if (foundAccount == null) {
+				createdAccount = createAccount(account.getOwner());
+				account = createdAccount;
+			} else {
+				account = foundAccount;
 			}
-			if (accountCheck != account) {
-				account = database.find(MoneyDB.class).where().ieq("owner", account.getOwner()).findUnique();
-			}
-		}
+		}*/
 		loadedAccounts.put(account, new Date());
 		return account;
 	}
 	
 	public void saveAccount(MoneyDB account) {
 		database.save(account);
-		if (loadedAccounts.get(account).before(new Date(System.currentTimeMillis()-2592000000l))) {
-			loadedAccounts.remove(account);
-		}
+	}
+	
+	public MoneyDB createAccount(String owner) {
+		MoneyDB createdAccount = new MoneyDB();
+		createdAccount.setOwner(owner);
+		createdAccount.setAmount(0);
+		return createdAccount;
 	}
 	
 	public MoneyDB getAccount(String owner) {
@@ -58,10 +61,7 @@ public class Money {
 		}
 		MoneyDB foundAccount = database.find(MoneyDB.class).where().ieq("owner", owner).findUnique();
 		if (foundAccount == null) {
-			MoneyDB createdAccount = new MoneyDB();
-			createdAccount.setOwner(owner);
-			createdAccount.setAmount(0);
-			return loadAccount(createdAccount);
+			return loadAccount(createAccount(owner));
 		} else {
 			return loadAccount(foundAccount);
 		}
