@@ -21,40 +21,48 @@ import java.util.List;
 import mmo.Core.MMOPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
 
-	private Money money;
-	private MoneyDBCleaner dbCleaner;
-	private int dbCleanerTask;
-	private String msgPrefix = ChatColor.GOLD+"["+ChatColor.AQUA+"Money"+ChatColor.GOLD+"]"+ChatColor.WHITE+" ";
+	//Internal Values
+	private ArrayList<Money> loadedAccounts = new ArrayList<Money>();
+	//Configurable values
+	private long accountKeepTime = 600000l;
+	//String Templates
+	private String templateUserDoesNotHavePermission = "&cYou don't have permission to do this!";
+	private String templateSyntaxError = "&fSyntax is &6/%s %s";
+	private String templateGetOwn = "&fYou hold onto %s %s.";
+	private String templateGetOther = "&f%s holds onto %s %s.";
+	private String templateSetOwn = "&fYou now hold onto %s %s.";
+	private String templateSetOther = "&f%s now holds onto %s %s.";
+	private String templateDrop = "&fYou dropped %s %s.";
+	private String templateTake = "&fYou took %s %s from %s.";
+	private String templateGive = "&fYou gave %s %s %s.";
 
 	@Override
 	public void onEnable() {
 		super.onEnable();
-		money = new Money(this);
-		dbCleaner = new MoneyDBCleaner(money);
-		money.server.getScheduler().scheduleAsyncRepeatingTask(this, dbCleaner, 1, 10);
 	}
 
 	@Override
 	public void loadConfiguration(Configuration cfg) {
+		templateUserDoesNotHavePermission = cfg.getString("StringTemplates.UserDoesNotHavePermission", templateUserDoesNotHavePermission);
+		templateSyntaxError = cfg.getString("StringTemplates.SyntaxError", templateSyntaxError);
+		templateGetOwn = cfg.getString("StringTemplates.GetOwn", templateGetOwn);
+		templateGetOther = cfg.getString("StringTemplates.GetOther", templateGetOther);
+		templateSetOwn = cfg.getString("StringTemplates.SetOwn", templateSetOwn);
+		templateSetOther = cfg.getString("StringTemplates.SetOther", templateSetOther);
+		templateDrop = cfg.getString("StringTemplates.Drop", templateDrop);
+		templateTake = cfg.getString("StringTemplates.Take", templateTake);
+		templateGive = cfg.getString("StringTemplates.Give", templateGive);
 	}
 
 	@Override
 	public void onDisable() {
-		money.server.getScheduler().cancelTask(dbCleanerTask);
-		dbCleaner = null;
-		for (MoneyDB account : money.loadedAccounts.keySet()) {
-			money.saveAccount(account);
-		}
-		money = null;
 		super.onDisable();
 	}
-	
+
 	@Override
 	public List<Class<?>> getDatabaseClasses() {
 		List<Class<?>> list = new ArrayList<Class<?>>();
@@ -62,86 +70,94 @@ public class MMOMoney extends MMOPlugin {
 		list.add(TransactionDB.class);
 		return list;
 	}
-
+	/* IF YOU SEE THIS IT'S BECAUSE OF A MAJOR REWORK
+	public Money getAccount(String owner) {
+	//Check if the Account is already loaded
+	for (Money anAccount : loadedAccounts) {
+	if (anAccount.getOwner().equalsIgnoreCase(owner)) {
+	return anAccount;
+	}
+	}
+	//Didn't find anything so lets check the Database
+	MoneyDB dbEntry = getDatabase().find(MoneyDB.class).where().ieq("owner", owner).findUnique();
+	if (dbEntry != null) {
+	
+	}
+	return null;
+	}
+	
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String as, String[] args) {
-		args = util.reparseArgs(args);
-		if (args.length > 0) {
-			String[] newArgs = (String[])util.resizeArray(args, 1, args.length);
-			if (args[0].equals("get")) {
-				return onCommand_get(cs,cmd,as,newArgs);
-			} else if (args[0].equals("set")) {
-				return onCommand_set(cs,cmd,as,newArgs);
-			} else if (args[0].equals("take")) {
-				return onCommand_take(cs,cmd,as,newArgs);
-			} else if (args[0].equals("give")) {
-				return onCommand_give(cs,cmd,as,newArgs);
-			} else if (args[0].equals("info")) {
-				return onCommand_info(cs,cmd,as,newArgs);
-			//} else if (args[0].equals("")) {
-			//	
-			}
-		} else {
-			cs.sendMessage(msgPrefix+"Syntax is /"+as+" get/set/take/give/info ...");
-			return true;
-		}
-		return false;
+	args = util.reparseArgs(args);
+	if (args.length > 0) {
+	String[] newArgs = (String[]) util.resizeArray(args, 1, args.length);
+	if (args[0].equals("get")) {
+	return onCommand_get(cs, cmd, as, newArgs);
+	} else if (args[0].equals("set")) {
+	return onCommand_set(cs, cmd, as, newArgs);
+	} else if (args[0].equals("take")) {
+	return onCommand_take(cs, cmd, as, newArgs);
+	} else if (args[0].equals("give")) {
+	return onCommand_give(cs, cmd, as, newArgs);
+	} else if (args[0].equals("info")) {
+	return onCommand_info(cs, cmd, as, newArgs);
+	//} else if (args[0].equals("")) {
+	//	
+	}
+	} else {
+	this.sendMessage(true, cs, templateSyntaxError, as, "get/set/drop/take/give");
+	return true;
+	}
+	return false;
 	}
 	
 	public boolean onCommand_get(CommandSender cs, Command cmd, String as, String[] args) {
-		String getHeldTemplate = ChatColor.WHITE+"%s %s "+ChatColor.YELLOW+"%l"+ChatColor.WHITE+" Coin(s).";
-		String getAccount = (cs instanceof Player) ? ((Player)cs).getName() : "Server";
-		long getMoney = money.getAccount(getAccount).getAmount(); //Getting NPE here
-		if (args.length == 1) {
-			if (cs.hasPermission("mmoMoney.getholdings.other")) {
-				getAccount = args[1];
-				getMoney = money.getAccount(getAccount).getAmount();
-				this.sendMessage(true, cs, getHeldTemplate, getAccount, "has", getMoney);
-			} else {
-				this.sendMessage(true, cs, ChatColor.RED+"You are not allowed to do this!");
-			}
-		} else if (args.length == 0) {
-			this.sendMessage(true, cs, getHeldTemplate, "You", "have", getMoney);
-		} else {
-			this.sendMessage(true, cs, "Syntax is /%s get (player)", as);
-			return true;
-		}
-		return false;
+	MoneyDB account = null;
+	if (cs instanceof Player) {
+	account = money.getAccount((args.length >= 1) ? args[0] : ((Player) cs).getName());
+	if (account == null) {
+	this.sendMessage(true, cs, templateSyntaxError, as, "get <player>");
+	return true;
 	}
-
+	} else {
+	account = money.getAccount("SERVER");
+	}
+	if ((args.length > 1) || ((args.length == 0) && (cs instanceof ConsoleCommandSender))) {
+	this.sendMessage(true, cs, templateSyntaxError, as, "get <player>");
+	return true;
+	} else if (args.length == 1) {
+	if (cs.hasPermission("mmomoney.get.other")) {
+	this.sendMessage(true, cs, templateGetOther, account.getOwner(), String.valueOf(account.getAmount()), "Coin(s)");
+	return true;
+	} else {
+	this.sendMessage(true, cs, templateUserDoesNotHavePermission);
+	return true;
+	}
+	} else {
+	if (cs.hasPermission("mmomoney.get.own")) {
+	this.sendMessage(true, cs, templateGetOwn, String.valueOf(money.getAccountMoney(account)), "Coin(s)");
+	return true;
+	} else {
+	this.sendMessage(true, cs, templateUserDoesNotHavePermission);
+	return true;
+	}
+	}
+	return false;
+	}
+	
 	public boolean onCommand_set(CommandSender cs, Command cmd, String as, String[] args) {
-		if (args[0].equals("")) {
-			
-		} else if (args[0].equals("")) {
-			
-		}
-		return false;
+	return false;
 	}
-
+	
 	public boolean onCommand_take(CommandSender cs, Command cmd, String as, String[] args) {
-		if (args[0].equals("")) {
-			
-		} else if (args[0].equals("")) {
-			
-		}
-		return false;
+	return false;
 	}
-
+	
 	public boolean onCommand_give(CommandSender cs, Command cmd, String as, String[] args) {
-		if (args[0].equals("")) {
-			
-		} else if (args[0].equals("")) {
-			
-		}
-		return false;
+	return false;
 	}
 	
 	public boolean onCommand_info(CommandSender cs, Command cmd, String as, String[] args) {
-		if (args[0].equals("")) {
-			
-		} else if (args[0].equals("")) {
-			
-		}
-		return false;
-	}
+	return false;
+	}*/
 }

@@ -130,7 +130,7 @@ public class util {
 	public static Object resizeArray(Object oldArray, int start, int length) {
 		int oldSize = java.lang.reflect.Array.getLength(oldArray);
 		start = Math.min(Math.max(start,0), oldSize-1);
-		length = Math.max(Math.min(length, oldSize-start),1);
+		length = Math.max(Math.min(length, oldSize-start),0);
 		
 		Class elementType = oldArray.getClass().getComponentType();
 		Object newArray = java.lang.reflect.Array.newInstance(elementType, length);

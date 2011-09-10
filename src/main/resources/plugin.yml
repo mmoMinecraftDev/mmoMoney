@@ -12,3 +12,43 @@ commands:
     description: 
     aliases: [con,coin,pouch,cash]
     usage: /money 
+
+pemissions:
+  mmomoney.*:
+    description: Grants all rights that mmoMoney has avaible.
+    default: op
+    children:
+      mmomoney.get: true
+      mmomoney.set: true
+      mmomoney.take: true
+      mmomoney.give: true
+  mmomoney.get:
+    description: Grants the right to get the amount of money of someone or yourself
+    default: op
+    children:
+      mmomoney.get.own: true
+      mmomoney.get.other: true
+  mmomoney.set:
+    description: Grants the right to set the amount of money of someone or yourself
+    default: op
+    children:
+      mmomoney.set.own: true
+      mmomoney.set.other: true
+  mmomoney.get.own:
+    description: Grants the right to get the amount of money you have.
+    default: op
+  mmomoney.get.other:
+    description: Grants the right to get the amount of money someone has.
+    default: op
+  mmomoney.set.own:
+    description: Grants the right to set the amount of money you have.
+    default: op
+  mmomoney.set.other:
+    description: Grants the right to set the amount of money someone has.
+    default: op
+  mmomoney.take:
+    description: Grants the right to take money from someone
+    default: op
+  mmomoney.give:
+    description: Grants the right to give money to someone
+    default: op
