@@ -28,9 +28,10 @@ import javax.persistence.Table;
 public class MoneyDB {
 
 	@Id
+	private long accountId;
 	@NotNull
 	@NotEmpty
-	@Length(max=128)
+	@Length(max = 128)
 	private String owner;
 	@NotNull
 	@NotEmpty
