@@ -11,11 +11,10 @@ import java.util.Date;
  * @author Xaymar
  */
 public class Account {
-	//API Data
+
 	private MoneyDB account;
 	private Date lastModified;
 	private boolean changed;
-
 
 	public MoneyDB getAccount() {
 		return account;
@@ -25,19 +24,19 @@ public class Account {
 		this.account = account;
 		this.setChanged(true);
 	}
-	
+
 	public String getOwner() {
 		return account.getOwner();
 	}
-	
+
 	public void setOwner(String owner) {
 		account.setOwner(owner);
 	}
-	
+
 	public long getMoneyAmount() {
 		return account.getAmount();
 	}
-	
+
 	public void setMoneyAmount(long moneyAmount) {
 		account.setAmount(moneyAmount);
 	}
