@@ -22,6 +22,7 @@ import com.avaje.ebean.validation.NotNull;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -30,26 +31,26 @@ import javax.persistence.Temporal;
 public class TransactionDB {
 
 	@Id
-	int id;
+	private int id;
 	@NotNull
 	@NotEmpty
-	@Length(max=128)
-	String fromAccount;
+	@OneToOne
+	private MoneyDB fromAccount;
 	@NotNull
 	@NotEmpty
-	@Length(max=128)
-	String toAccount;
+	@OneToOne
+	private MoneyDB toAccount;
 	@NotNull
 	@NotEmpty
-	long amount;
+	private long amount;
 	@NotNull
-	@Length(max=256)
-	String reason;
+	@Length(max = 256)
+	private String reason;
 	@NotNull
 	@Temporal(javax.persistence.TemporalType.DATE)
-	Date onDate;
+	private Date onDate;
 	@NotNull
-	boolean failed;
+	private boolean failed;
 
 	public long getAmount() {
 		return amount;
@@ -59,11 +60,11 @@ public class TransactionDB {
 		this.amount = amount;
 	}
 
-	public String getFromAccount() {
+	public MoneyDB getFromAccount() {
 		return fromAccount;
 	}
 
-	public void setFromAccount(String fromAccount) {
+	public void setFromAccount(MoneyDB fromAccount) {
 		this.fromAccount = fromAccount;
 	}
 
@@ -83,11 +84,11 @@ public class TransactionDB {
 		this.reason = reason;
 	}
 
-	public String getToAccount() {
+	public MoneyDB getToAccount() {
 		return toAccount;
 	}
 
-	public void setToAccount(String toAccount) {
+	public void setToAccount(MoneyDB toAccount) {
 		this.toAccount = toAccount;
 	}
 
@@ -98,5 +99,4 @@ public class TransactionDB {
 	public void setFailed(boolean failed) {
 		this.failed = failed;
 	}
-	
 }
