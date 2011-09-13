@@ -18,6 +18,7 @@ public class Money {
 	protected static String			templateNoPermission			= "&cYou don't have permission to do this!";
 	protected static String			templateSyntaxError			= "&fSyntax is &6/%s %s";
 	protected static String			templateAccountInvalid			= "&fAccount '%s' does not exist.";
+	protected static String			templateNotEnoughMoney			= "&fYou don't have enough money to do that.";
 	protected static String			templateGetOwn				= "&fYou hold onto %s %s.";
 	protected static String			templateGetOther			= "&f%s holds onto %s %s.";
 	protected static String			templateSetOwn				= "&fYou now hold onto %s %s.";
@@ -25,6 +26,7 @@ public class Money {
 	protected static String			templateDrop				= "&fYou dropped %s %s.";
 	protected static String			templateTake				= "&fYou took %s %s from %s.";
 	protected static String			templateGive				= "&fYou gave %s %s %s.";
+	protected static String			templateCurrency			= "Coin(s)";
 	protected static ArrayList<Account>	usedAccounts				= new ArrayList<Account>();
 	protected static long			defaultAccountMoney			= 0;
 	
@@ -58,10 +60,12 @@ public class Money {
 			newAccount.setOwner(name.toLowerCase());
 		}
 		newAccount.setMoneyAmount(money);
+		usedAccounts.add(newAccount);
 		return newAccount;
 	}
 	
 	public void deleteAccount(Account account) {
 		plugin.getDatabase().delete(account.getAccount());
+		usedAccounts.remove(account);
 	}
 }
