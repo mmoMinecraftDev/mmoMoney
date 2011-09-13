@@ -35,7 +35,7 @@ public class MMOMoney extends MMOPlugin {
 		getDatabase().find(MoneyDB.class);
 		getDatabase().find(TransactionDB.class);
 
-		Money api = new Money();
+		api = new Money();
 		api.createAccount("SERVER", 0);
 	}
 
@@ -51,12 +51,14 @@ public class MMOMoney extends MMOPlugin {
 		Money.templateTake = util.colorize(cfg.getString("StringTemplates.Take", Money.templateTake));
 		Money.templateGive = util.colorize(cfg.getString("StringTemplates.Give", Money.templateGive));
 		Money.templateAccountInvalid = util.colorize(cfg.getString("StringTemplates.AccountInvalid", Money.templateAccountInvalid));
+		Money.templateNotEnoughMoney = util.colorize(cfg.getString("StringTemplates.NotEnoughMoney", Money.templateNotEnoughMoney));
+		Money.templateCurrency = util.colorize(cfg.getString("StringTemplates.Currency", Money.templateCurrency));
 	}
 
 	@Override
 	public void onDisable() {
 		super.onDisable();
-		Money api = null;
+		api = null;
 		getDatabase().save(MoneyDB.class);
 		getDatabase().save(TransactionDB.class);
 	}
@@ -90,10 +92,10 @@ public class MMOMoney extends MMOPlugin {
 			} else if (args[0].equalsIgnoreCase("admin")) {
 				return onCommand_Admin(cs, cmd, label, newArgs);
 			} else {
-				sendMessage(cs, Money.templateSyntaxError, label, "<stats|get|set|take|give|admin>");
+				sendMessage(cs, Money.templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");
 			}
 		}
-		return false;
+		return true;
 	}
 
 	public boolean onCommand_Stats(CommandSender cs, Command cmd, String label, String[] args) {
@@ -102,76 +104,169 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Get(CommandSender cs, Command cmd, String label, String[] args) {
-		String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-		String to = (args.length == 0) ? ((cs instanceof Player) ? ((Player) cs).getName() : "SERVER") : args[0];
+		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
 
-		if (from.equalsIgnoreCase(to)) {
-			if (cs.hasPermission("mmomoney.get.own")) {
-				Account aFrom = api.getAccount(from);
-				if (aFrom != null) {
-					sendMessage(cs, Money.templateGetOwn, String.valueOf(aFrom.getMoney()), "Coin(s).");
-				} else {
-					sendMessage(cs, Money.templateAccountInvalid, from);
-				}
+		if (args.length == 0) {
+			return onCommand_Get_Own(cs, cmd, label, newArgs);
+		} else if (args.length == 1) {
+			return onCommand_Get_Other(cs, cmd, label, newArgs);
+		} else {
+			sendMessage(cs, Money.templateSyntaxError, label, "get <player>");
+		}
+		return true;
+	}
+
+	private boolean onCommand_Get_Own(CommandSender cs, Command cmd, String label, String[] args) {
+		if (cs.hasPermission("mmomoney.get.own")) {
+			String chkAccount = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER"; //If it's the console, set it to SERVER
+			Account aCheck = api.getAccount(chkAccount);
+			if (aCheck != null) {
+				String amount = String.valueOf(aCheck.getMoney());
+				sendMessage(cs, Money.templateGetOwn, amount, Money.templateCurrency);
 			} else {
-				sendMessage(cs, Money.templateNoPermission);
+				sendMessage(cs, Money.templateAccountInvalid, chkAccount);
 			}
 		} else {
-			if (cs.hasPermission("mmomoney.get.other")) {
-				Account aTo = api.getAccount(to);
-				if (aTo != null) {
-					sendMessage(cs, Money.templateGetOther, to, String.valueOf(aTo.getMoney()), "Coin(s).");
-				} else {
-					sendMessage(cs, Money.templateAccountInvalid, to);
-				}
-			} else {
-				sendMessage(cs, Money.templateNoPermission);
-			}
+			sendMessage(cs, Money.templateNoPermission);
 		}
+		return true;
+	}
 
-		return false;
+	private boolean onCommand_Get_Other(CommandSender cs, Command cmd, String label, String[] args) {
+		if (cs.hasPermission("mmomoney.get.other")) {
+			String chkAccount = args[0];
+			Account aCheck = api.getAccount(chkAccount);
+			if (aCheck != null) {
+				String amount = String.valueOf(aCheck.getMoney());
+				sendMessage(cs, Money.templateGetOther, aCheck.getOwner(), amount, Money.templateCurrency);
+			} else {
+				sendMessage(cs, Money.templateAccountInvalid, chkAccount);
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Set(CommandSender cs, Command cmd, String label, String[] args) {
-		String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-		String to = (args.length == 0) ? ((cs instanceof Player) ? ((Player) cs).getName() : "SERVER") : args[0];
-		long amount = (args.length == 1) ? Long.parseLong(args[0]) : ((args.length == 2) ? Long.parseLong(args[1]) : 0l);
+		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
 
-		if (from.equalsIgnoreCase(to)) {
-			if (cs.hasPermission("mmomoney.set.own")) {
-				Account aTo = api.getAccount(from);
-				if (aTo != null) {
-					aTo.setMoney(amount);
-					sendMessage(cs, Money.templateSetOwn, String.valueOf(amount), "Coin(s).");
-				} else {
-					sendMessage(cs, Money.templateAccountInvalid, from);
-				}
+		if (args.length == 1) {
+			return onCommand_Set_Own(cs, cmd, label, newArgs);
+		} else if (args.length == 2) {
+			return onCommand_Set_Other(cs, cmd, label, newArgs);
+		} else {
+			sendMessage(cs, Money.templateSyntaxError, label, "set <player|amount> (amount)");
+		}
+		return true;
+	}
+
+	private boolean onCommand_Set_Own(CommandSender cs, Command cmd, String label, String[] args) {
+		if (cs.hasPermission("mmomoney.set.own")) {
+			String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
+			String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
+			Account aTo = api.getAccount(to);
+			if (aTo == null) {
+				sendMessage(cs, Money.templateAccountInvalid, to);
 			} else {
-				sendMessage(cs, Money.templateNoPermission);
+				Long amount = Long.parseLong(args[0]);
+				TransactionDB tdb = aTo.setMoney(amount);
+				tdb.setReason("/" + label + " set " + String.valueOf(amount) + " called by " + from);
+				if (tdb.isFailed()) {
+					sendMessage(cs, "ERRORCODE: ChatCallSetOwnTDBFail, please notify a Developer");
+				} else {
+					sendMessage(cs, Money.templateSetOwn, String.valueOf(amount), Money.templateCurrency);
+				}
 			}
 		} else {
-			if (cs.hasPermission("mmomoney.set.other")) {
-				Account aTo = api.getAccount(to);
-				if (aTo != null) {
-					aTo.setMoney(amount);
-					sendMessage(cs, Money.templateSetOther, to, String.valueOf(amount), "Coin(s).");
-				} else {
-					sendMessage(cs, Money.templateAccountInvalid, to);
-				}
-			} else {
-				sendMessage(cs, Money.templateNoPermission);
-			}
+			sendMessage(cs, Money.templateNoPermission);
 		}
+		return true;
+	}
 
-		return false;
+	private boolean onCommand_Set_Other(CommandSender cs, Command cmd, String label, String[] args) {
+		if (cs.hasPermission("mmomoney.set.other")) {
+			String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
+			String to = args[0];
+			Account aTo = api.getAccount(to);
+			if (aTo == null) {
+				sendMessage(cs, Money.templateAccountInvalid, to);
+			} else {
+				Long amount = Long.parseLong(args[1]);
+				TransactionDB tdb = aTo.setMoney(amount);
+				tdb.setReason("/" + label + " set " + to + " " + String.valueOf(amount) + " called by " + from);
+				if (tdb.isFailed()) {
+					sendMessage(cs, "ERRORCODE: ChatCallSetOtherTDBFail, please notify a Developer");
+				} else {
+					sendMessage(cs, Money.templateSetOther, aTo.getOwner(), String.valueOf(amount), Money.templateCurrency);
+				}
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Take(CommandSender cs, Command cmd, String label, String[] args) {
-		return false;
+		if (cs.hasPermission("mmomoney.take")) {
+			if (args.length == 2) {
+				String from = args[0];
+				String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
+				Long amount = Long.parseLong(args[1]);
+
+				Account aFrom = api.getAccount(from);
+				Account aTo = api.getAccount(to);
+				if (aFrom == null) {
+					sendMessage(cs, Money.templateAccountInvalid, from);
+				}
+				if (aTo == null) {
+					sendMessage(cs, Money.templateAccountInvalid, to);
+				}
+				TransactionDB tdb = aFrom.transferMoney(aTo, amount);
+				tdb.setReason("/" + label + " take " + from + " " + String.valueOf(amount) + " called by " + to);
+				if (tdb.isFailed()) {
+					sendMessage(cs, "ERRORCODE: ChatCallTakeTDBFail, please notify a Developer");
+				} else {
+					sendMessage(cs, Money.templateTake, String.valueOf(amount), Money.templateCurrency, aFrom.getOwner());
+				}
+			} else {
+				sendMessage(cs, Money.templateSyntaxError, label, "take <player> <amount>");
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Give(CommandSender cs, Command cmd, String label, String[] args) {
-		return false;
+		if (cs.hasPermission("mmomoney.give")) {
+			if (args.length == 2) {
+				String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
+				String to = args[0];
+				Long amount = Long.parseLong(args[1]);
+
+				Account aFrom = api.getAccount(from);
+				Account aTo = api.getAccount(to);
+				if (aFrom == null) {
+					sendMessage(cs, Money.templateAccountInvalid, from);
+				}
+				if (aTo == null) {
+					sendMessage(cs, Money.templateAccountInvalid, to);
+				}
+				TransactionDB tdb = aFrom.transferMoney(aTo, amount);
+				tdb.setReason("/" + label + " give " + from + " " + String.valueOf(amount) + " called by " + from);
+				if (tdb.isFailed()) {
+					sendMessage(cs, "ERRORCODE: ChatCallGiveTDBFail, please notify a Developer");
+				} else {
+					sendMessage(cs, Money.templateGive, aTo.getOwner(), String.valueOf(amount), Money.templateCurrency);
+				}
+			} else {
+				sendMessage(cs, Money.templateSyntaxError, label, "give <player> <amount>");
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
