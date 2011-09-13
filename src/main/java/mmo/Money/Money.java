@@ -17,6 +17,7 @@ public class Money {
 	protected static Configuration		cfg;
 	protected static String			templateNoPermission			= "&cYou don't have permission to do this!";
 	protected static String			templateSyntaxError			= "&fSyntax is &6/%s %s";
+	protected static String			templateAccountInvalid			= "&fAccount '%s' does not exist.";
 	protected static String			templateGetOwn				= "&fYou hold onto %s %s.";
 	protected static String			templateGetOther			= "&f%s holds onto %s %s.";
 	protected static String			templateSetOwn				= "&fYou now hold onto %s %s.";
