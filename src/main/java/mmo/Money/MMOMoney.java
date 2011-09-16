@@ -17,9 +17,10 @@
 package mmo.Money;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
-import mmo.Core.util.util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -41,18 +42,18 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public void loadConfiguration(Configuration cfg) {
-		Money.templateNoPermission = util.colorize(cfg.getString("StringTemplates.NoPermission", Money.templateNoPermission));
-		Money.templateSyntaxError = util.colorize(cfg.getString("StringTemplates.SyntaxError", Money.templateSyntaxError));
-		Money.templateGetOwn = util.colorize(cfg.getString("StringTemplates.GetOwn", Money.templateGetOwn));
-		Money.templateGetOther = util.colorize(cfg.getString("StringTemplates.GetOther", Money.templateGetOther));
-		Money.templateSetOwn = util.colorize(cfg.getString("StringTemplates.SetOwn", Money.templateSetOwn));
-		Money.templateSetOther = util.colorize(cfg.getString("StringTemplates.SetOther", Money.templateSetOther));
-		Money.templateDrop = util.colorize(cfg.getString("StringTemplates.Drop", Money.templateDrop));
-		Money.templateTake = util.colorize(cfg.getString("StringTemplates.Take", Money.templateTake));
-		Money.templateGive = util.colorize(cfg.getString("StringTemplates.Give", Money.templateGive));
-		Money.templateAccountInvalid = util.colorize(cfg.getString("StringTemplates.AccountInvalid", Money.templateAccountInvalid));
-		Money.templateNotEnoughMoney = util.colorize(cfg.getString("StringTemplates.NotEnoughMoney", Money.templateNotEnoughMoney));
-		Money.templateCurrency = util.colorize(cfg.getString("StringTemplates.Currency", Money.templateCurrency));
+		Money.templateNoPermission = cfg.getString("StringTemplates.NoPermission", Money.templateNoPermission);
+		Money.templateSyntaxError = cfg.getString("StringTemplates.SyntaxError", Money.templateSyntaxError);
+		Money.templateGetOwn = cfg.getString("StringTemplates.GetOwn", Money.templateGetOwn);
+		Money.templateGetOther = cfg.getString("StringTemplates.GetOther", Money.templateGetOther);
+		Money.templateSetOwn = cfg.getString("StringTemplates.SetOwn", Money.templateSetOwn);
+		Money.templateSetOther = cfg.getString("StringTemplates.SetOther", Money.templateSetOther);
+		Money.templateDrop = cfg.getString("StringTemplates.Drop", Money.templateDrop);
+		Money.templateTake = cfg.getString("StringTemplates.Take", Money.templateTake);
+		Money.templateGive = cfg.getString("StringTemplates.Give", Money.templateGive);
+		Money.templateAccountInvalid = cfg.getString("StringTemplates.AccountInvalid", Money.templateAccountInvalid);
+		Money.templateNotEnoughMoney = cfg.getString("StringTemplates.NotEnoughMoney", Money.templateNotEnoughMoney);
+		Money.templateCurrency = cfg.getString("StringTemplates.Currency", Money.templateCurrency);
 	}
 
 	@Override
@@ -73,8 +74,8 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-		args = util.reparseArgs(args);
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		args = MMO.smartSplit(MMO.join(args, " "));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
 		if (args.length == 0) {
 			return onCommand_Get(cs, cmd, label, newArgs);
@@ -104,7 +105,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Get(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
 		if (args.length == 0) {
 			return onCommand_Get_Own(cs, cmd, label, newArgs);
@@ -149,7 +150,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Set(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
 		if (args.length == 1) {
 			return onCommand_Set_Own(cs, cmd, label, newArgs);
@@ -270,7 +271,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 		if (cs.hasPermission("mmomoney.admin")) {
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
@@ -291,7 +292,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 		return false;
 	}
 
@@ -312,7 +313,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin_Database(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 		return false;
 	}
 
