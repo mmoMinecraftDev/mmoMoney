@@ -271,12 +271,8 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
-<<<<<<< Updated upstream
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
-=======
->>>>>>> Stashed changes
 		if (cs.hasPermission("mmomoney.admin")) {
-			String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
 			} else {
@@ -295,12 +291,8 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
-<<<<<<< Updated upstream
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
-		return false;
-=======
 		if (cs.hasPermission("mmomoney.admin")) {
-			String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 			if (args.length == 0) {
 				
 			} else {
@@ -316,7 +308,6 @@ public class MMOMoney extends MMOPlugin {
 			sendMessage(cs, Money.templateNoPermission);
 		}
 		return true;
->>>>>>> Stashed changes
 	}
 
 	private boolean onCommand_Admin_Account_List(CommandSender cs, Command cmd, String label, String[] args) {
