@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
+import mmo.Core.util.util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -74,7 +75,7 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-		args = MMO.smartSplit(MMO.join(args, " "));
+		args = util.reparseArgs(args);//MMO.smartSplit(MMO.join(args, " ")); Fix mmoCore first Rycochet!
 		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
 		if (args.length == 0) {
