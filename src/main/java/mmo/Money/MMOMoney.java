@@ -271,8 +271,12 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
+<<<<<<< Updated upstream
 		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+=======
+>>>>>>> Stashed changes
 		if (cs.hasPermission("mmomoney.admin")) {
+			String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
 			} else {
@@ -286,14 +290,33 @@ public class MMOMoney extends MMOPlugin {
 			}
 		} else {
 			sendMessage(cs, Money.templateNoPermission);
-			return true;
 		}
-		return false;
+		return true;
 	}
 
 	private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
+<<<<<<< Updated upstream
 		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 		return false;
+=======
+		if (cs.hasPermission("mmomoney.admin")) {
+			String[] newArgs = ((String[]) util.resizeArray(args, 1, args.length));
+			if (args.length == 0) {
+				
+			} else {
+				if (args[0].equals("list")) {
+				} else if (args[0].equals("create")) {
+				} else if (args[0].equals("reset")) {
+				} else if (args[0].equals("remove")) {
+				} else {
+					sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
+				}
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
+>>>>>>> Stashed changes
 	}
 
 	private boolean onCommand_Admin_Account_List(CommandSender cs, Command cmd, String label, String[] args) {

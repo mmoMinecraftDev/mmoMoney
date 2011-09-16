@@ -10,8 +10,7 @@ description: mmoMoney
 commands:
   money:
     description: 
-    aliases: [con,coin,pouch,cash]
-    usage: /money 
+    aliases: [cash,econ]
 
 pemissions:
   mmomoney.*:
@@ -94,4 +93,7 @@ pemissions:
       mmomoney.admin.database.purge: true
   mmomoney.admin.database.purge:
     description: Grants the right to purge the database of default and unused accounts.
+    default: op
+  mmomoney.admin.database.empty:
+    description: Grants the right to empty
     default: op
