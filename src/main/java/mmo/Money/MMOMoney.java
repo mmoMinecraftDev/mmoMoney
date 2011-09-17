@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.util.List;
 import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
-import mmo.Core.util.util;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -36,13 +35,17 @@ public class MMOMoney extends MMOPlugin {
 		super.onEnable();
 		getDatabase().find(MoneyDB.class);
 		getDatabase().find(TransactionDB.class);
-
+		
+		Money.plugin = this;
+		
 		api = new Money();
 		api.createAccount("SERVER", 0);
 	}
 
 	@Override
 	public void loadConfiguration(Configuration cfg) {
+		Money.cfg = cfg;
+		
 		Money.templateNoPermission = cfg.getString("StringTemplates.NoPermission", Money.templateNoPermission);
 		Money.templateSyntaxError = cfg.getString("StringTemplates.SyntaxError", Money.templateSyntaxError);
 		Money.templateGetOwn = cfg.getString("StringTemplates.GetOwn", Money.templateGetOwn);
