@@ -22,7 +22,7 @@ import com.avaje.ebean.validation.NotNull;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 
@@ -34,11 +34,11 @@ public class TransactionDB {
 	private int id;
 	@NotNull
 	@NotEmpty
-	@OneToOne
+	@ManyToOne
 	private MoneyDB fromAccount;
 	@NotNull
 	@NotEmpty
-	@OneToOne
+	@ManyToOne
 	private MoneyDB toAccount;
 	@NotNull
 	@NotEmpty

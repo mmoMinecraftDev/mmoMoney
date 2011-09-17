@@ -67,6 +67,9 @@ pemissions:
     description: Grants access to /money admin
     default: op
   mmomoney.admin.account:
+    description: Grants access to account commands
+    default: op
+  mmomoney.admin.account.*:
     description: Grants all account rights
     default: op
     children:
@@ -87,13 +90,21 @@ pemissions:
     description: Grants the right to remove accounts.
     default: op
   mmomoney.admin.database:
+    description: Grants access to database commands
+    default: op
+  mmomoney.admin.database.*:
     description: Grants all database rights
     default: op
     children:
       mmomoney.admin.database.purge: true
+      mmomoney.admin.database.empty: true
+      mmomoney.admin.database.refresh: true
   mmomoney.admin.database.purge:
     description: Grants the right to purge the database of default and unused accounts.
     default: op
   mmomoney.admin.database.empty:
-    description: Grants the right to empty
+    description: Grants the right to empty the database. Can have horrible effects on plugins using the account system of this.
+    default: op
+  mmomoney.admin.database.refresh:
+    description: Grants the right to refresh the database. Unsaved changes will get lost.
     default: op

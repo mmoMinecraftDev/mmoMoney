@@ -27,6 +27,7 @@ public class Money {
 	protected static String			templateTake				= "&fYou took %s %s from %s.";
 	protected static String			templateGive				= "&fYou gave %s %s %s.";
 	protected static String			templateCurrency			= "Coin(s)";
+	protected static String			templateDatabaseRefresh			= "&fThe Database has been refreshed.";
 	protected static ArrayList<Account>	usedAccounts				= new ArrayList<Account>();
 	protected static long			defaultAccountMoney			= 0;
 	

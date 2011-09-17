@@ -75,7 +75,7 @@ public class MMOMoney extends MMOPlugin {
 
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-		args = util.reparseArgs(args);//MMO.smartSplit(MMO.join(args, " ")); Fix mmoCore first Rycochet!
+		args = MMO.smartSplit(MMO.join(args, " "));
 		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 
 		if (args.length == 0) {
@@ -292,15 +292,19 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
-		if (cs.hasPermission("mmomoney.admin")) {
+		if (cs.hasPermission("mmomoney.admin.account")) {
 			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
 			if (args.length == 0) {
-				
+				sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
 			} else {
 				if (args[0].equals("list")) {
+					return onCommand_Admin_Account_List(cs, cmd, label, newArgs);
 				} else if (args[0].equals("create")) {
-				} else if (args[0].equals("reset")) {
+					return onCommand_Admin_Account_Create(cs, cmd, label, newArgs);
 				} else if (args[0].equals("remove")) {
+					return onCommand_Admin_Account_Remove(cs, cmd, label, newArgs);
+				} else if (args[0].equals("reset")) {
+					return onCommand_Admin_Account_Reset(cs, cmd, label, newArgs);
 				} else {
 					sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
 				}
@@ -328,15 +332,53 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Admin_Database(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
-		return false;
+		if (cs.hasPermission("mmomoney.admin.database")) {
+			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+			if (args.length == 0) {
+				sendMessage(cs, Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
+			} else {
+				if (args[0].equals("purge")) {
+					return onCommand_Admin_Database_Purge(cs, cmd, label, newArgs);
+				} else if (args[0].equals("empty")) {
+					return onCommand_Admin_Database_Empty(cs, cmd, label, newArgs);
+				} else if (args[0].equals("refresh")) {
+					return onCommand_Admin_Database_Refresh(cs, cmd, label, newArgs);
+				} else {
+					sendMessage(cs, Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
+				}
+			}
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Admin_Database_Purge(CommandSender cs, Command cmd, String label, String[] args) {
-		return false;
+		if (cs.hasPermission("mmomoney.admin.database.purge")) {
+			
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 
 	private boolean onCommand_Admin_Database_Empty(CommandSender cs, Command cmd, String label, String[] args) {
-		return false;
+		if (cs.hasPermission("mmomoney.admin.database.empty")) {
+			
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
+	}
+
+	private boolean onCommand_Admin_Database_Refresh(CommandSender cs, Command cmd, String label, String[] args) {
+		if (cs.hasPermission("mmomoney.admin.database.refresh")) {
+			getDatabase().refresh(MoneyDB.class);
+			getDatabase().refresh(TransactionDB.class);
+			sendMessage(cs, Money.templateDatabaseRefresh);
+		} else {
+			sendMessage(cs, Money.templateNoPermission);
+		}
+		return true;
 	}
 }
