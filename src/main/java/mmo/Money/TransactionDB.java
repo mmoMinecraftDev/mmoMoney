@@ -23,6 +23,7 @@ import java.io.Serializable;
 import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -36,10 +37,12 @@ public class TransactionDB implements Serializable {
     @NotNull
     @NotEmpty
     @ManyToOne
+    @JoinColumn(name="accountId", nullable=false)
     private MoneyDB fromAccount;
     @NotNull
     @NotEmpty
     @ManyToOne
+    @JoinColumn(name="accountId", nullable=false)
     private MoneyDB toAccount;
     @NotNull
     @NotEmpty
