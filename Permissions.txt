@@ -1,0 +1,25 @@
+mmoMoney Permissions List
+--------------------------------------------------------------------
+Name			Purpose		Description
+--------------------------------------------------------------------
+mmomoney		Master		-
+    account		Child		Allow the player to have an Account(necessary for 'take' 'give' 'drop';ignored by 'account create')
+    get			Branch		-
+        own		Child		Allow the player to see the content of his moneybag
+        other		Child		Allow the player to see the content of someones moneybag (includes own)
+    set			Branch		-
+        own		Child		Allow the player to magically make content appear in his moneybag
+        other		Child		Allow the player to magically make content appear in someones moneybag (Includes own)
+    take			Child		Allow the player to take the content from someones moneybag
+    give			Child		Allow the player to give content from his moneybag to someone
+    drop			Child		Allow the player to drop content from his moneybag
+    admin			Branch		Allow the player to use the admin commandset
+        account		Branch		Allow the player to use the account commandset
+            list		Child		Allow the player to list all accounts ever created
+            create		Child		Allow the player to create new accounts(not usually needed)
+            reset		Child		Allow the player to reset accounts(resets them to default)
+            remove		Child		Allow the player to remove accounts(not usually needed)
+        database		Branch		Allow the player to use the database commandset
+            purge		Child		Allow the player to purge accounts(unused for 30 days, still at default. DON'T DO THIS WHILE PLAYERS ARE ONLINE)
+            empty		Child		Allow the player to empty the database completely(Removes all accounts and Transactions. HIGHLY DISADVISED TO EVER GRANT ANYONE TO DO THIS)
+            refresh		Child		Allow the player to refresh the database(Writes current changes and reloads all accounts from database, safe to give anyone who wants)

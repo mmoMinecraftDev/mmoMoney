@@ -24,6 +24,8 @@ import mmo.Core.MMOPlugin;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Event.Type;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
@@ -37,6 +39,10 @@ public class MMOMoney extends MMOPlugin {
 		getDatabase().find(TransactionDB.class);
 		
 		Money.plugin = this;
+        PlayerHandler moneyHandler = new PlayerHandler();
+        this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, moneyHandler, Priority.Monitor, this);
+        this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, moneyHandler, Priority.Monitor, this);
+        this.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, moneyHandler, Priority.Monitor, this);
 		
 		api = new Money();
 		api.createAccount("SERVER", 0);
@@ -79,7 +85,7 @@ public class MMOMoney extends MMOPlugin {
 	@Override
 	public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
 		args = MMO.smartSplit(MMO.join(args, " "));
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+		String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
 		if (args.length == 0) {
 			return onCommand_Get(cs, cmd, label, newArgs);
@@ -104,12 +110,12 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	public boolean onCommand_Stats(CommandSender cs, Command cmd, String label, String[] args) {
-		sendMessage(cs, "%s v%s - %s -", this.getDescription().getName(), this.getDescription().getVersion(), this.getDescription().getWebsite());
+		sendMessage(cs, "&f%s v%s - &6%s&f -", this.getDescription().getName(), this.getDescription().getVersion(), this.getDescription().getWebsite());
 		return true;
 	}
 
 	private boolean onCommand_Get(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+		String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
 		if (args.length == 0) {
 			return onCommand_Get_Own(cs, cmd, label, newArgs);
@@ -154,7 +160,7 @@ public class MMOMoney extends MMOPlugin {
 	}
 
 	private boolean onCommand_Set(CommandSender cs, Command cmd, String label, String[] args) {
-		String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+		String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
 		if (args.length == 1) {
 			return onCommand_Set_Own(cs, cmd, label, newArgs);
@@ -276,7 +282,7 @@ public class MMOMoney extends MMOPlugin {
 
 	private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
 		if (cs.hasPermission("mmomoney.admin")) {
-			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+			String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
 			} else {
@@ -296,7 +302,7 @@ public class MMOMoney extends MMOPlugin {
 
 	private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
 		if (cs.hasPermission("mmomoney.admin.account")) {
-			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+			String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
 			} else {
@@ -336,7 +342,7 @@ public class MMOMoney extends MMOPlugin {
 
 	private boolean onCommand_Admin_Database(CommandSender cs, Command cmd, String label, String[] args) {
 		if (cs.hasPermission("mmomoney.admin.database")) {
-			String[] newArgs = Arrays.copyOfRange(args, 1, args.length);
+			String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 			if (args.length == 0) {
 				sendMessage(cs, Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
 			} else {

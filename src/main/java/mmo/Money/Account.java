@@ -19,6 +19,7 @@ public class Account {
 
 	public Account() {
 		api = new Money();
+		lastModified = new Date();
 	}
 
 	protected MoneyDB getAccount() {
