@@ -19,37 +19,39 @@ package mmo.Money;
 import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
+import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity()
 @Table(name = "mmo_Money")
-public class MoneyDB {
+public class MoneyDB implements Serializable {
 
-	@Id
-	private long accountId;
-	@NotNull
-	@NotEmpty
-	@Length(max = 128)
-	private String owner;
-	@NotNull
-	@NotEmpty
-	private long amount;
+    @Id
+    private long accountId;
+    @NotNull
+    @NotEmpty
+    @Length(max = 128)
+    private String owner;
+    @NotNull
+    @NotEmpty
+    private long amount;
 
-	public long getAmount() {
-		return amount;
-	}
+    public long getAmount() {
+        return amount;
+    }
 
-	public void setAmount(long amount) {
-		this.amount = amount;
-	}
+    public void setAmount(long amount) {
+        this.amount = amount;
+    }
 
-	public String getOwner() {
-		return owner;
-	}
+    public String getOwner() {
+        return owner;
+    }
 
-	public void setOwner(String owner) {
-		this.owner = owner;
-	}
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
 }

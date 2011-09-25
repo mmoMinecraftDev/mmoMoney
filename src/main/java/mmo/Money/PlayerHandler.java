@@ -15,25 +15,24 @@ import org.bukkit.event.player.PlayerQuitEvent;
  */
 public class PlayerHandler extends PlayerListener {
 
-	Money api = new Money();
+    Money api = new Money();
 
-	//This should handle the automatic creation and unloading of accounts on connect/disconnect.
-	
-	@Override
-	public void onPlayerKick(PlayerKickEvent event) {
-		super.onPlayerKick(event);
-		api.getAccount(event.getPlayer().getName()).setChanged(true);
-	}
+    //This should handle the automatic creation and unloading of accounts on connect/disconnect.
+    @Override
+    public void onPlayerKick(PlayerKickEvent event) {
+        super.onPlayerKick(event);
+        api.getAccount(event.getPlayer().getName()).setChanged(true);
+    }
 
-	@Override
-	public void onPlayerLogin(PlayerLoginEvent event) {
-		super.onPlayerLogin(event);
-		api.createAccount(event.getPlayer().getName());
-	}
+    @Override
+    public void onPlayerLogin(PlayerLoginEvent event) {
+        super.onPlayerLogin(event);
+        api.createAccount(event.getPlayer().getName());
+    }
 
-	@Override
-	public void onPlayerQuit(PlayerQuitEvent event) {
-		super.onPlayerQuit(event);
-		api.getAccount(event.getPlayer().getName()).setChanged(true);
-	}
+    @Override
+    public void onPlayerQuit(PlayerQuitEvent event) {
+        super.onPlayerQuit(event);
+        api.getAccount(event.getPlayer().getName()).setChanged(true);
+    }
 }
