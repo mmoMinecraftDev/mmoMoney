@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
+import mmo.Core.util.EnumBitSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -33,7 +34,13 @@ public class MMOMoney extends MMOPlugin {
 
     private Money api;
 
-    @Override
+	@Override
+	public EnumBitSet mmoSupport(EnumBitSet support) {
+		support.set(Support.MMO_DATABASE);
+		return support;
+	}
+
+	@Override
     public void onEnable() {
         super.onEnable();
         
@@ -41,9 +48,9 @@ public class MMOMoney extends MMOPlugin {
         
         Money.plugin = this;
         PlayerHandler moneyHandler = new PlayerHandler();
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, moneyHandler, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, moneyHandler, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, moneyHandler, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_JOIN, moneyHandler, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_KICK, moneyHandler, Priority.Monitor, this);
+        pm.registerEvent(Type.PLAYER_QUIT, moneyHandler, Priority.Monitor, this);
 
         api = new Money();
         api.createAccount("SERVER", 0);
