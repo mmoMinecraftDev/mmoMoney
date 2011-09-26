@@ -28,22 +28,16 @@ public class Money {
     protected static String templateGive = "&fYou gave %s %s %s.";
     protected static String templateCurrency = "Coin(s)";
     protected static String templateDatabaseRefresh = "&fThe Database has been refreshed.";
-    protected static ArrayList<MoneyDB> managerMoneyDB = new ArrayList<MoneyDB>();
-    protected static ArrayList<TransactionDB> managerTransactionDB = new ArrayList<TransactionDB>();
-    protected static ArrayList<Account> usedAccounts = new ArrayList<Account>();
     protected static long defaultAccountMoney = 0;
+/*    protected static ArrayList<MoneyDB> managerMoneyDB = new ArrayList<MoneyDB>();
+    protected static ArrayList<TransactionDB> managerTransactionDB = new ArrayList<TransactionDB>();
+    protected static ArrayList<Account> usedAccounts = new ArrayList<Account>();*/
 
-    public Account getAccount(String name) {
-        MoneyDB dbAccount = null;
-        for (MoneyDB entry : managerMoneyDB) {
-            if (entry.getOwner().equalsIgnoreCase(name)) {
-                dbAccount = entry;
-                break;
-            }
-        }
+    public static Account getAccount(String name) {
+/*        MoneyDB dbAccount = plugin.getDatabase().find(MoneyDB.class).;
         if (dbAccount != null) {
-            for (Account account : usedAccounts) { //If ebean is persistent, every entry in the Database has exactly one pointer.
-                if (account.getAccount() == dbAccount) { //Which means I can just check if an Account has the Database entry.
+            for (Account account : usedAccounts) {
+                if (account.getAccount() == dbAccount) {
                     return account;
                 }
             }
@@ -53,29 +47,30 @@ public class Money {
             usedAccounts.add(userAccount);
             return userAccount;
         } else {
-            return null;
-        }
+            */return null;/*
+        }*/
     }
 
-    public Account createAccount(String name) {
+    public static Account createAccount(String name) {
         return createAccount(name, defaultAccountMoney);
     }
 
-    public Account createAccount(String name, long money) {
+    public static Account createAccount(String name, long money) {
         Account newAccount = getAccount(name);
-        if (newAccount == null) {
+/*        if (newAccount == null) {
+            MoneyDB acc = new MoneyDB();
+            managerMoneyDB.add(acc);
             newAccount = new Account();
-            newAccount.setAccount(new MoneyDB());
+            newAccount.setAccount(acc);
             newAccount.setOwner(name.toLowerCase());
         }
         newAccount.setMoneyAmount(money);
-        usedAccounts.add(newAccount);
+        usedAccounts.add(newAccount);*/
         return newAccount;
     }
 
-    public void deleteAccount(Account account) {
-        plugin.getDatabase().delete(account.getAccount());
-        plugin.loadDatabase();
-        usedAccounts.remove(account);
+    public static void deleteAccount(Account account) {
+/*        plugin.getDatabase().delete(account.getAccount());
+        usedAccounts.remove(account);*/
     }
 }

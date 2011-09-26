@@ -44,7 +44,7 @@ public class MMOMoney extends MMOPlugin {
     public void onEnable() {
         super.onEnable();
         
-        loadDatabase();
+        //loadDatabase();
         
         Money.plugin = this;
         PlayerHandler moneyHandler = new PlayerHandler();
@@ -56,7 +56,7 @@ public class MMOMoney extends MMOPlugin {
         api.createAccount("SERVER", 0);
     }
     
-    public void loadDatabase() {
+    /*public void loadDatabase() {
         Money.managerMoneyDB.clear();
         Money.managerTransactionDB.clear();
         Query<MoneyDB> updateMoneyDB = getDatabase().find(MoneyDB.class);
@@ -88,7 +88,7 @@ public class MMOMoney extends MMOPlugin {
         for (TransactionDB entry : Money.managerTransactionDB) {
             getDatabase().save(entry);
         }
-    }
+    }*/
 
     @Override
     public void loadConfiguration(Configuration cfg) {
@@ -112,7 +112,7 @@ public class MMOMoney extends MMOPlugin {
     public void onDisable() {
         super.onDisable();
         
-        saveDatabase();
+        //saveDatabase();
         
         api = null;
     }
