@@ -16,6 +16,41 @@
  */
 package mmo.Money;
 
+import java.util.ArrayList;
+
 public class MMOMoneyAPI {
-    
+
+    protected static MMOMoney pluginInstance;
+    protected static ArrayList<MMOMoneyDB> loadedAccounts = new ArrayList<MMOMoneyDB>();
+
+    //MMOMoneyDB
+    public static MMOMoneyDB getAccount(String name) {
+        MMOMoneyDB account = pluginInstance.getDatabase().find(MMOMoneyDB.class).where().ieq("owner", name.toLowerCase()).findUnique();
+        if (account != null) {
+            loadedAccounts.add(account);
+        }
+        return account;
+    }
+
+    public static MMOMoneyDB createAccount(String name) {
+        MMOMoneyDB account = getAccount(name);
+        if (account == null) {
+            account = new MMOMoneyDB();
+            account.setOwner(name.toLowerCase());
+            account.setAmount(MMOMoney.cfgNewAccountMoney);
+            pluginInstance.getDatabase().save(account);
+            loadedAccounts.add(account);
+        }
+        return account;
+    }
+
+    public static void deleteAccount(MMOMoneyDB account) {
+        pluginInstance.getDatabase().delete(account);
+        loadedAccounts.remove(account);
+    }
+
+    //MMOTransactionDB
+    public static MMOTransactionDB getTransaction() {
+        return null;
+    }
 }

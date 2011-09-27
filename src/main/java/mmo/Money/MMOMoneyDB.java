@@ -20,6 +20,7 @@ import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -29,12 +30,11 @@ import javax.persistence.Table;
 public class MMOMoneyDB implements Serializable {
 
     @Id
-    @NotNull
     @NotEmpty
+    @Column(insertable=false, name="accountId", nullable=false, precision=0, scale=1, unique=true, updatable=false)
     private long accountId;
-    @NotNull
     @NotEmpty
-    @Length(max = 256)
+    @Column(insertable=true, nullable=false, length=256, unique=true, updatable=true)
     private String owner;
     @NotNull
     @NotEmpty

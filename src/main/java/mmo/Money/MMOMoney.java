@@ -16,7 +16,6 @@
  */
 package mmo.Money;
 
-import com.avaje.ebean.Query;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -25,14 +24,10 @@ import mmo.Core.MMOPlugin;
 import mmo.Core.util.EnumBitSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
 
-    protected static MMOMoney plugin;
     protected static Configuration cfg;
     protected static String templateNoPermission = "&cYou don't have permission to do this!";
     protected static String templateSyntaxError = "&fSyntax is &6/%s %s";
@@ -58,6 +53,8 @@ public class MMOMoney extends MMOPlugin {
 	@Override
     public void onEnable() {
         super.onEnable();
+        
+        MMOMoneyAPI.pluginInstance = this;
     }
     
     @Override
@@ -93,34 +90,34 @@ public class MMOMoney extends MMOPlugin {
         return list;
     }
 
-/*    @Override
+    @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
-        args = MMO.smartSplit(MMO.join(args, " "));
+ /*       args = MMO.smartSplit(MMO.join(args, " "));
         String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
         if (args.length == 0) {
-            return onCommand_Get(cs, cmd, label, newArgs);
+              return onCommand_Get(cs, cmd, label, newArgs);
         } else {
             if (args[0].equalsIgnoreCase("stats")) {
-                return onCommand_Stats(cs, cmd, label, newArgs);
+                  return onCommand_Stats(cs, cmd, label, newArgs);
             } else if (args[0].equalsIgnoreCase("get")) {
-                return onCommand_Get(cs, cmd, label, newArgs);
+                  return onCommand_Get(cs, cmd, label, newArgs);
             } else if (args[0].equalsIgnoreCase("set")) {
-                return onCommand_Set(cs, cmd, label, newArgs);
+                  return onCommand_Set(cs, cmd, label, newArgs);
             } else if (args[0].equalsIgnoreCase("take")) {
-                return onCommand_Take(cs, cmd, label, newArgs);
+                  return onCommand_Take(cs, cmd, label, newArgs);
             } else if (args[0].equalsIgnoreCase("give")) {
-                return onCommand_Give(cs, cmd, label, newArgs);
+                  return onCommand_Give(cs, cmd, label, newArgs);
             } else if (args[0].equalsIgnoreCase("admin")) {
-                return onCommand_Admin(cs, cmd, label, newArgs);
+                  return onCommand_Admin(cs, cmd, label, newArgs);
             } else {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");
+                */sendMessage(cs, templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");/*
             }
-        }
+        }*/
         return true;
     }
 
-    public boolean onCommand_Stats(CommandSender cs, Command cmd, String label, String[] args) {
+/*    public boolean onCommand_Stats(CommandSender cs, Command cmd, String label, String[] args) {
         sendMessage(cs, "&f%s v%s - &6%s&f -", this.getDescription().getName(), this.getDescription().getVersion(), this.getDescription().getWebsite());
         return true;
     }
