@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
+import mmo.Core.util.EnumBitSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -48,7 +49,13 @@ public class MMOMoney extends MMOPlugin {
     protected static String templateDatabaseRefresh = "&fThe Database has been refreshed.";
     protected static int cfgNewAccountMoney = 0;
 
-    @Override
+	@Override
+	public EnumBitSet mmoSupport(EnumBitSet support) {
+		support.set(Support.MMO_DATABASE);
+		return support;
+	}
+
+	@Override
     public void onEnable() {
         super.onEnable();
     }
