@@ -16,91 +16,70 @@
  */
 package mmo.Money;
 
-import com.avaje.ebean.validation.Length;
 import com.avaje.ebean.validation.NotEmpty;
 import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
-import java.util.Date;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
 
 @Entity()
 @Table(name = "mmo_Transaction")
-public class TransactionDB implements Serializable {
+public class MMOTransactionDB implements Serializable {
 
     @Id
-    private int id;
+    private long transactionId;
+    @NotNull
+    @NotEmpty
+    private long timeDone;
     @NotNull
     @NotEmpty
     @ManyToOne
-    @JoinColumn(name="accountId", nullable=false)
-    private MoneyDB fromAccount;
+    @JoinColumn(name = "accountId", nullable = false)
+    private MMOMoneyDB fromAccount;
     @NotNull
     @NotEmpty
     @ManyToOne
-    @JoinColumn(name="accountId", nullable=false)
-    private MoneyDB toAccount;
+    @JoinColumn(name = "accountId", nullable = false)
+    private MMOMoneyDB toAccount;
     @NotNull
-    @NotEmpty
-    private long amount;
-    @NotNull
-    @Length(max = 256)
-    private String reason;
-    @NotNull
-    @Temporal(javax.persistence.TemporalType.DATE)
-    private Date onDate;
-    @NotNull
-    private boolean failed;
+    private String reasonWhy;
 
-    public long getAmount() {
-        return amount;
+    public MMOTransactionDB() {
+        timeDone = System.currentTimeMillis();
     }
 
-    public void setAmount(long amount) {
-        this.amount = amount;
-    }
-
-    public MoneyDB getFromAccount() {
+    public MMOMoneyDB getFromAccount() {
         return fromAccount;
     }
 
-    public void setFromAccount(MoneyDB fromAccount) {
+    public void setFromAccount(MMOMoneyDB fromAccount) {
         this.fromAccount = fromAccount;
     }
 
-    public Date getOnDate() {
-        return onDate;
+    public String getReasonWhy() {
+        return reasonWhy;
     }
 
-    public void setOnDate(Date onDate) {
-        this.onDate = onDate;
+    public void setReasonWhy(String reasonWhy) {
+        this.reasonWhy = reasonWhy;
     }
 
-    public String getReason() {
-        return reason;
+    public long getTimeDone() {
+        return timeDone;
     }
 
-    public void setReason(String reason) {
-        this.reason = reason;
-    }
-
-    public MoneyDB getToAccount() {
+    public MMOMoneyDB getToAccount() {
         return toAccount;
     }
 
-    public void setToAccount(MoneyDB toAccount) {
+    public void setToAccount(MMOMoneyDB toAccount) {
         this.toAccount = toAccount;
     }
 
-    public boolean isFailed() {
-        return failed;
-    }
-
-    public void setFailed(boolean failed) {
-        this.failed = failed;
+    public long getTransactionId() {
+        return transactionId;
     }
 }

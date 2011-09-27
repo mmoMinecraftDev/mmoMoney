@@ -22,22 +22,38 @@ import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity()
 @Table(name = "mmo_Money")
-public class MoneyDB implements Serializable {
+public class MMOMoneyDB implements Serializable {
 
     @Id
+    @NotNull
+    @NotEmpty
     private long accountId;
     @NotNull
     @NotEmpty
-    @Length(max = 128)
+    @Length(max = 256)
     private String owner;
     @NotNull
     @NotEmpty
     private long amount;
+    @NotNull
+    @NotEmpty
+    private long timeCreated;
+    @NotNull
+    @NotEmpty
+    private long timeModified;
+
+    public MMOMoneyDB() {
+        timeCreated = System.currentTimeMillis();
+        timeModified = System.currentTimeMillis();
+    }
+
+    public long getAccountId() {
+        return accountId;
+    }
 
     public long getAmount() {
         return amount;
@@ -45,6 +61,7 @@ public class MoneyDB implements Serializable {
 
     public void setAmount(long amount) {
         this.amount = amount;
+        timeModified = System.currentTimeMillis();
     }
 
     public String getOwner() {
@@ -53,5 +70,14 @@ public class MoneyDB implements Serializable {
 
     public void setOwner(String owner) {
         this.owner = owner;
+        timeModified = System.currentTimeMillis();
+    }
+
+    public long getTimeCreated() {
+        return timeCreated;
+    }
+
+    public long getTimeModified() {
+        return timeModified;
     }
 }

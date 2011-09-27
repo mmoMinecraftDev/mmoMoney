@@ -31,94 +31,62 @@ import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
 
-    private Money api;
+    protected static MMOMoney plugin;
+    protected static Configuration cfg;
+    protected static String templateNoPermission = "&cYou don't have permission to do this!";
+    protected static String templateSyntaxError = "&fSyntax is &6/%s %s";
+    protected static String templateAccountInvalid = "&fAccount '%s' does not exist.";
+    protected static String templateNotEnoughMoney = "&fYou don't have enough money to do that.";
+    protected static String templateGetOwn = "&fYou hold onto %s %s.";
+    protected static String templateGetOther = "&f%s holds onto %s %s.";
+    protected static String templateSetOwn = "&fYou now hold onto %s %s.";
+    protected static String templateSetOther = "&f%s now holds onto %s %s.";
+    protected static String templateDrop = "&fYou dropped %s %s.";
+    protected static String templateTake = "&fYou took %s %s from %s.";
+    protected static String templateGive = "&fYou gave %s %s %s.";
+    protected static String templateCurrency = "Coin(s)";
+    protected static String templateDatabaseRefresh = "&fThe Database has been refreshed.";
+    protected static int cfgNewAccountMoney = 0;
 
     @Override
     public void onEnable() {
         super.onEnable();
-        
-        //loadDatabase();
-        
-        Money.plugin = this;
-        PlayerHandler moneyHandler = new PlayerHandler();
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_JOIN, moneyHandler, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_KICK, moneyHandler, Priority.Monitor, this);
-        this.getServer().getPluginManager().registerEvent(Type.PLAYER_QUIT, moneyHandler, Priority.Monitor, this);
-
-        api = new Money();
-        api.createAccount("SERVER", 0);
     }
     
-    /*public void loadDatabase() {
-        Money.managerMoneyDB.clear();
-        Money.managerTransactionDB.clear();
-        Query<MoneyDB> updateMoneyDB = getDatabase().find(MoneyDB.class);
-        Query<TransactionDB> updateTransactionDB = getDatabase().find(TransactionDB.class);
-        
-        for (MoneyDB entry : updateMoneyDB.findList()) {
-            Money.managerMoneyDB.add(entry);
-        }
-        for (TransactionDB entry : updateTransactionDB.findList()) {
-            Money.managerTransactionDB.add(entry);
-        }
-    }
-    
-    public void clearDatabase() {
-        for (MoneyDB entry : Money.managerMoneyDB) {
-            getDatabase().delete(entry);
-        }
-        for (TransactionDB entry : Money.managerTransactionDB) {
-            getDatabase().delete(entry);
-        }
-        Money.managerMoneyDB.clear();
-        Money.managerTransactionDB.clear();
-    }
-    
-    public void saveDatabase() {
-        for (MoneyDB entry : Money.managerMoneyDB) {
-            getDatabase().save(entry);
-        }
-        for (TransactionDB entry : Money.managerTransactionDB) {
-            getDatabase().save(entry);
-        }
-    }*/
-
     @Override
     public void loadConfiguration(Configuration cfg) {
-        Money.cfg = cfg;
-
-        Money.templateNoPermission = cfg.getString("StringTemplates.NoPermission", Money.templateNoPermission);
-        Money.templateSyntaxError = cfg.getString("StringTemplates.SyntaxError", Money.templateSyntaxError);
-        Money.templateGetOwn = cfg.getString("StringTemplates.GetOwn", Money.templateGetOwn);
-        Money.templateGetOther = cfg.getString("StringTemplates.GetOther", Money.templateGetOther);
-        Money.templateSetOwn = cfg.getString("StringTemplates.SetOwn", Money.templateSetOwn);
-        Money.templateSetOther = cfg.getString("StringTemplates.SetOther", Money.templateSetOther);
-        Money.templateDrop = cfg.getString("StringTemplates.Drop", Money.templateDrop);
-        Money.templateTake = cfg.getString("StringTemplates.Take", Money.templateTake);
-        Money.templateGive = cfg.getString("StringTemplates.Give", Money.templateGive);
-        Money.templateAccountInvalid = cfg.getString("StringTemplates.AccountInvalid", Money.templateAccountInvalid);
-        Money.templateNotEnoughMoney = cfg.getString("StringTemplates.NotEnoughMoney", Money.templateNotEnoughMoney);
-        Money.templateCurrency = cfg.getString("StringTemplates.Currency", Money.templateCurrency);
+        cfgNewAccountMoney = cfg.getInt("account.newmoney", cfgNewAccountMoney);
+        
+        /* Will be in the i18n implementation for mmoCore
+         * DO NOT UNCOMMENT
+        templateNoPermission = cfg.getString("i18n.NoPermission", templateNoPermission);
+        templateSyntaxError = cfg.getString("i18n.SyntaxError", templateSyntaxError);
+        templateGetOwn = cfg.getString("i18n.GetOwn", templateGetOwn);
+        templateGetOther = cfg.getString("i18n.GetOther", templateGetOther);
+        templateSetOwn = cfg.getString("i18n.SetOwn", templateSetOwn);
+        templateSetOther = cfg.getString("i18n.SetOther", templateSetOther);
+        templateDrop = cfg.getString("i18n.Drop", templateDrop);
+        templateTake = cfg.getString("i18n.Take", templateTake);
+        templateGive = cfg.getString("i18n.Give", templateGive);
+        templateAccountInvalid = cfg.getString("i18n.AccountInvalid", templateAccountInvalid);
+        templateNotEnoughMoney = cfg.getString("i18n.NotEnoughMoney", templateNotEnoughMoney);
+        templateCurrency = cfg.getString("i18n.Currency", templateCurrency);*/
     }
 
     @Override
     public void onDisable() {
         super.onDisable();
-        
-        //saveDatabase();
-        
-        api = null;
     }
 
     @Override
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
-        list.add(MoneyDB.class);
-        list.add(TransactionDB.class);
+        list.add(MMOMoneyDB.class);
+        list.add(MMOTransactionDB.class);
         return list;
     }
 
-    @Override
+/*    @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
         args = MMO.smartSplit(MMO.join(args, " "));
         String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
@@ -139,7 +107,7 @@ public class MMOMoney extends MMOPlugin {
             } else if (args[0].equalsIgnoreCase("admin")) {
                 return onCommand_Admin(cs, cmd, label, newArgs);
             } else {
-                sendMessage(cs, Money.templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");
             }
         }
         return true;
@@ -158,7 +126,7 @@ public class MMOMoney extends MMOPlugin {
         } else if (args.length == 1) {
             return onCommand_Get_Other(cs, cmd, label, newArgs);
         } else {
-            sendMessage(cs, Money.templateSyntaxError, label, "get <player>");
+            sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "get <player>");
         }
         return true;
     }
@@ -166,15 +134,15 @@ public class MMOMoney extends MMOPlugin {
     private boolean onCommand_Get_Own(CommandSender cs, Command cmd, String label, String[] args) {
         if (cs.hasPermission("mmomoney.get.own")) {
             String chkAccount = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER"; //If it's the console, set it to SERVER
-            Account aCheck = api.getAccount(chkAccount);
+            DISABLED_Account aCheck = api.getAccount(chkAccount);
             if (aCheck != null) {
                 String amount = String.valueOf(aCheck.getMoney());
-                sendMessage(cs, Money.templateGetOwn, amount, Money.templateCurrency);
+                sendMessage(cs, DISABLED_Money.templateGetOwn, amount, DISABLED_Money.templateCurrency);
             } else {
-                sendMessage(cs, Money.templateAccountInvalid, chkAccount);
+                sendMessage(cs, DISABLED_Money.templateAccountInvalid, chkAccount);
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -182,15 +150,15 @@ public class MMOMoney extends MMOPlugin {
     private boolean onCommand_Get_Other(CommandSender cs, Command cmd, String label, String[] args) {
         if (cs.hasPermission("mmomoney.get.other")) {
             String chkAccount = args[0];
-            Account aCheck = api.getAccount(chkAccount);
+            DISABLED_Account aCheck = api.getAccount(chkAccount);
             if (aCheck != null) {
                 String amount = String.valueOf(aCheck.getMoney());
-                sendMessage(cs, Money.templateGetOther, aCheck.getOwner(), amount, Money.templateCurrency);
+                sendMessage(cs, DISABLED_Money.templateGetOther, aCheck.getOwner(), amount, DISABLED_Money.templateCurrency);
             } else {
-                sendMessage(cs, Money.templateAccountInvalid, chkAccount);
+                sendMessage(cs, DISABLED_Money.templateAccountInvalid, chkAccount);
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -203,7 +171,7 @@ public class MMOMoney extends MMOPlugin {
         } else if (args.length == 2) {
             return onCommand_Set_Other(cs, cmd, label, newArgs);
         } else {
-            sendMessage(cs, Money.templateSyntaxError, label, "set <player|amount> (amount)");
+            sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "set <player|amount> (amount)");
         }
         return true;
     }
@@ -212,9 +180,9 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.set.own")) {
             String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
             String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-            Account aTo = api.getAccount(to);
+            DISABLED_Account aTo = api.getAccount(to);
             if (aTo == null) {
-                sendMessage(cs, Money.templateAccountInvalid, to);
+                sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
             } else {
                 Long amount = Long.parseLong(args[0]);
                 TransactionDB tdb = aTo.setMoney(amount);
@@ -222,11 +190,11 @@ public class MMOMoney extends MMOPlugin {
                 if (tdb.isFailed()) {
                     sendMessage(cs, "ERRORCODE: ChatCallSetOwnTDBFail, please notify a Developer");
                 } else {
-                    sendMessage(cs, Money.templateSetOwn, String.valueOf(amount), Money.templateCurrency);
+                    sendMessage(cs, DISABLED_Money.templateSetOwn, String.valueOf(amount), DISABLED_Money.templateCurrency);
                 }
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -235,9 +203,9 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.set.other")) {
             String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
             String to = args[0];
-            Account aTo = api.getAccount(to);
+            DISABLED_Account aTo = api.getAccount(to);
             if (aTo == null) {
-                sendMessage(cs, Money.templateAccountInvalid, to);
+                sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
             } else {
                 Long amount = Long.parseLong(args[1]);
                 TransactionDB tdb = aTo.setMoney(amount);
@@ -245,11 +213,11 @@ public class MMOMoney extends MMOPlugin {
                 if (tdb.isFailed()) {
                     sendMessage(cs, "ERRORCODE: ChatCallSetOtherTDBFail, please notify a Developer");
                 } else {
-                    sendMessage(cs, Money.templateSetOther, aTo.getOwner(), String.valueOf(amount), Money.templateCurrency);
+                    sendMessage(cs, DISABLED_Money.templateSetOther, aTo.getOwner(), String.valueOf(amount), DISABLED_Money.templateCurrency);
                 }
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -261,26 +229,26 @@ public class MMOMoney extends MMOPlugin {
                 String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
                 Long amount = Long.parseLong(args[1]);
 
-                Account aFrom = api.getAccount(from);
-                Account aTo = api.getAccount(to);
+                DISABLED_Account aFrom = api.getAccount(from);
+                DISABLED_Account aTo = api.getAccount(to);
                 if (aFrom == null) {
-                    sendMessage(cs, Money.templateAccountInvalid, from);
+                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, from);
                 }
                 if (aTo == null) {
-                    sendMessage(cs, Money.templateAccountInvalid, to);
+                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
                 }
                 TransactionDB tdb = aFrom.transferMoney(aTo, amount);
                 tdb.setReason("/" + label + " take " + from + " " + String.valueOf(amount) + " called by " + to);
                 if (tdb.isFailed()) {
                     sendMessage(cs, "ERRORCODE: ChatCallTakeTDBFail, please notify a Developer");
                 } else {
-                    sendMessage(cs, Money.templateTake, String.valueOf(amount), Money.templateCurrency, aFrom.getOwner());
+                    sendMessage(cs, DISABLED_Money.templateTake, String.valueOf(amount), DISABLED_Money.templateCurrency, aFrom.getOwner());
                 }
             } else {
-                sendMessage(cs, Money.templateSyntaxError, label, "take <player> <amount>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "take <player> <amount>");
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -292,26 +260,26 @@ public class MMOMoney extends MMOPlugin {
                 String to = args[0];
                 Long amount = Long.parseLong(args[1]);
 
-                Account aFrom = api.getAccount(from);
-                Account aTo = api.getAccount(to);
+                DISABLED_Account aFrom = api.getAccount(from);
+                DISABLED_Account aTo = api.getAccount(to);
                 if (aFrom == null) {
-                    sendMessage(cs, Money.templateAccountInvalid, from);
+                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, from);
                 }
                 if (aTo == null) {
-                    sendMessage(cs, Money.templateAccountInvalid, to);
+                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
                 }
                 TransactionDB tdb = aFrom.transferMoney(aTo, amount);
                 tdb.setReason("/" + label + " give " + from + " " + String.valueOf(amount) + " called by " + from);
                 if (tdb.isFailed()) {
                     sendMessage(cs, "ERRORCODE: ChatCallGiveTDBFail, please notify a Developer");
                 } else {
-                    sendMessage(cs, Money.templateGive, aTo.getOwner(), String.valueOf(amount), Money.templateCurrency);
+                    sendMessage(cs, DISABLED_Money.templateGive, aTo.getOwner(), String.valueOf(amount), DISABLED_Money.templateCurrency);
                 }
             } else {
-                sendMessage(cs, Money.templateSyntaxError, label, "give <player> <amount>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "give <player> <amount>");
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -320,18 +288,18 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.admin")) {
             String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
             if (args.length == 0) {
-                sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin <account|database>");
             } else {
                 if (args[0].equalsIgnoreCase("account")) {
                     return onCommand_Admin_Account(cs, cmd, label, newArgs);
                 } else if (args[0].equalsIgnoreCase("database")) {
                     return onCommand_Admin_Database(cs, cmd, label, newArgs);
                 } else {
-                    sendMessage(cs, Money.templateSyntaxError, label, "admin <account|database>");
+                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin <account|database>");
                 }
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -340,7 +308,7 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.admin.account")) {
             String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
             if (args.length == 0) {
-                sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
             } else {
                 if (args[0].equals("list")) {
                     return onCommand_Admin_Account_List(cs, cmd, label, newArgs);
@@ -351,11 +319,11 @@ public class MMOMoney extends MMOPlugin {
                 } else if (args[0].equals("reset")) {
                     return onCommand_Admin_Account_Reset(cs, cmd, label, newArgs);
                 } else {
-                    sendMessage(cs, Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
+                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
                 }
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -380,7 +348,7 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.admin.database")) {
             String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
             if (args.length == 0) {
-                sendMessage(cs, Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
+                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
             } else {
                 if (args[0].equals("purge")) {
                     return onCommand_Admin_Database_Purge(cs, cmd, label, newArgs);
@@ -389,11 +357,11 @@ public class MMOMoney extends MMOPlugin {
                 } else if (args[0].equals("refresh")) {
                     return onCommand_Admin_Database_Refresh(cs, cmd, label, newArgs);
                 } else {
-                    sendMessage(cs, Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
+                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
                 }
             }
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -401,7 +369,7 @@ public class MMOMoney extends MMOPlugin {
     private boolean onCommand_Admin_Database_Purge(CommandSender cs, Command cmd, String label, String[] args) {
         if (cs.hasPermission("mmomoney.admin.database.purge")) {
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -409,7 +377,7 @@ public class MMOMoney extends MMOPlugin {
     private boolean onCommand_Admin_Database_Empty(CommandSender cs, Command cmd, String label, String[] args) {
         if (cs.hasPermission("mmomoney.admin.database.empty")) {
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
     }
@@ -418,10 +386,10 @@ public class MMOMoney extends MMOPlugin {
         if (cs.hasPermission("mmomoney.admin.database.refresh")) {
             getDatabase().refresh(MoneyDB.class);
             getDatabase().refresh(TransactionDB.class);
-            sendMessage(cs, Money.templateDatabaseRefresh);
+            sendMessage(cs, DISABLED_Money.templateDatabaseRefresh);
         } else {
-            sendMessage(cs, Money.templateNoPermission);
+            sendMessage(cs, DISABLED_Money.templateNoPermission);
         }
         return true;
-    }
+    }*/
 }

@@ -13,9 +13,9 @@ import org.bukkit.event.player.PlayerQuitEvent;
  *
  * @author Xaymar
  */
-public class PlayerHandler extends PlayerListener {
+public class DISABLED_PlayerHandler extends PlayerListener {
 
-    Money api = new Money();
+    DISABLED_Money api = new DISABLED_Money();
 
     //This should handle the automatic creation and unloading of accounts on connect/disconnect.
     @Override
