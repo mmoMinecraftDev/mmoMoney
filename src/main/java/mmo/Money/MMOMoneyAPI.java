@@ -24,29 +24,30 @@ public class MMOMoneyAPI {
     protected static ArrayList<MMOMoneyDB> loadedAccounts = new ArrayList<MMOMoneyDB>();
 
     //MMOMoneyDB
-    public static MMOMoneyDB getAccount(String name) {
+    public static MMOAccount getAccount(String name) {
         MMOMoneyDB account = pluginInstance.getDatabase().find(MMOMoneyDB.class).where().ieq("owner", name.toLowerCase()).findUnique();
         if (account != null) {
             loadedAccounts.add(account);
         }
-        return account;
+        return new MMOAccount(account,pluginInstance);
     }
 
-    public static MMOMoneyDB createAccount(String name) {
-        MMOMoneyDB account = getAccount(name);
+    public static MMOAccount createAccount(String name) {
+        MMOAccount account = getAccount(name);
         if (account == null) {
-            account = new MMOMoneyDB();
-            account.setOwner(name.toLowerCase());
-            account.setAmount(MMOMoney.cfgNewAccountMoney);
-            pluginInstance.getDatabase().save(account);
-            loadedAccounts.add(account);
+            MMOMoneyDB dbaccount = new MMOMoneyDB();
+            dbaccount.setOwner(name.toLowerCase());
+            dbaccount.setAmount(MMOMoney.cfgNewAccountMoney);
+            pluginInstance.getDatabase().save(dbaccount);
+            loadedAccounts.add(dbaccount);
+            account = new MMOAccount(dbaccount, pluginInstance);
         }
         return account;
     }
 
-    public static void deleteAccount(MMOMoneyDB account) {
-        pluginInstance.getDatabase().delete(account);
-        loadedAccounts.remove(account);
+    public static void deleteAccount(MMOAccount account) {
+        pluginInstance.getDatabase().delete(account.linkedAccount);
+        loadedAccounts.remove(account.linkedAccount);
     }
 
     //MMOTransactionDB

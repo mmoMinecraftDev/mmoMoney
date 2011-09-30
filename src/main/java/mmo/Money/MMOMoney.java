@@ -42,8 +42,9 @@ public class MMOMoney extends MMOPlugin {
     protected static String templateGive = "&fYou gave %s %s %s.";
     protected static String templateCurrency = "Coin(s)";
     protected static String templateDatabaseRefresh = "&fThe Database has been refreshed.";
-    protected static int cfgNewAccountMoney = 0;
-
+    protected static long cfgNewAccountMoney = 60;
+    protected static long cfgKeepInMemoryFor = 60;
+    
 	@Override
 	public EnumBitSet mmoSupport(EnumBitSet support) {
 		support.set(Support.MMO_DATABASE);
@@ -59,8 +60,8 @@ public class MMOMoney extends MMOPlugin {
     
     @Override
     public void loadConfiguration(Configuration cfg) {
-        cfgNewAccountMoney = cfg.getInt("account.newmoney", cfgNewAccountMoney);
-        
+        cfgNewAccountMoney = cfg.getInt("account.newmoney", (int)cfgNewAccountMoney);
+        cfgKeepInMemoryFor = cfg.getInt("account.keepmemory", (int)cfgKeepInMemoryFor);
         /* Will be in the i18n implementation for mmoCore
          * DO NOT UNCOMMENT
         templateNoPermission = cfg.getString("i18n.NoPermission", templateNoPermission);
