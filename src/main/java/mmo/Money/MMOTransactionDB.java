@@ -29,57 +29,57 @@ import javax.persistence.Table;
 @Table(name = "mmo_Transaction")
 public class MMOTransactionDB implements Serializable {
 
-    @Id
-    private long transactionId;
-    @NotNull
-    @NotEmpty
-    private long timeDone;
-    @NotNull
-    @NotEmpty
-    @ManyToOne
-    @JoinColumn(name = "accountId", nullable = false)
-    private MMOMoneyDB fromAccount;
-    @NotNull
-    @NotEmpty
-    @ManyToOne
-    @JoinColumn(name = "accountId", nullable = false)
-    private MMOMoneyDB toAccount;
-    @NotNull
-    private String reasonWhy;
+	@Id
+	private long transactionId;
+	@NotNull
+	@NotEmpty
+	private long timeDone;
+	@NotNull
+	@NotEmpty
+	@ManyToOne
+	@JoinColumn(name = "accountId", nullable = false)
+	private MMOMoneyDB fromAccount;
+	@NotNull
+	@NotEmpty
+	@ManyToOne
+	@JoinColumn(name = "accountId", nullable = false)
+	private MMOMoneyDB toAccount;
+	@NotNull
+	private String reasonWhy;
 
-    public MMOTransactionDB() {
-        timeDone = System.currentTimeMillis();
-    }
+	public MMOTransactionDB() {
+		timeDone = System.currentTimeMillis();
+	}
 
-    public MMOMoneyDB getFromAccount() {
-        return fromAccount;
-    }
+	public MMOMoneyDB getFromAccount() {
+		return fromAccount;
+	}
 
-    public void setFromAccount(MMOMoneyDB fromAccount) {
-        this.fromAccount = fromAccount;
-    }
+	public void setFromAccount(MMOMoneyDB fromAccount) {
+		this.fromAccount = fromAccount;
+	}
 
-    public String getReasonWhy() {
-        return reasonWhy;
-    }
+	public String getReasonWhy() {
+		return reasonWhy;
+	}
 
-    public void setReasonWhy(String reasonWhy) {
-        this.reasonWhy = reasonWhy;
-    }
+	public void setReasonWhy(String reasonWhy) {
+		this.reasonWhy = reasonWhy;
+	}
 
-    public long getTimeDone() {
-        return timeDone;
-    }
+	public long getTimeDone() {
+		return timeDone;
+	}
 
-    public MMOMoneyDB getToAccount() {
-        return toAccount;
-    }
+	public MMOMoneyDB getToAccount() {
+		return toAccount;
+	}
 
-    public void setToAccount(MMOMoneyDB toAccount) {
-        this.toAccount = toAccount;
-    }
+	public void setToAccount(MMOMoneyDB toAccount) {
+		this.toAccount = toAccount;
+	}
 
-    public long getTransactionId() {
-        return transactionId;
-    }
+	public long getTransactionId() {
+		return transactionId;
+	}
 }

@@ -29,55 +29,55 @@ import javax.persistence.Table;
 @Table(name = "mmo_Money")
 public class MMOMoneyDB implements Serializable {
 
-    @Id
-    @NotEmpty
-    @Column(insertable=false, name="accountId", nullable=false, precision=0, scale=1, unique=true, updatable=false)
-    private long accountId;
-    @NotEmpty
-    @Column(insertable=true, nullable=false, length=256, unique=true, updatable=true)
-    private String owner;
-    @NotNull
-    @NotEmpty
-    private long amount;
-    @NotNull
-    @NotEmpty
-    private long timeCreated;
-    @NotNull
-    @NotEmpty
-    private long timeModified;
+	@Id
+	@NotEmpty
+	@Column(insertable = false, name = "accountId", nullable = false, precision = 0, scale = 1, unique = true, updatable = false)
+	private long accountId;
+	@NotEmpty
+	@Column(insertable = true, nullable = false, length = 256, unique = true, updatable = true)
+	private String owner;
+	@NotNull
+	@NotEmpty
+	private long amount;
+	@NotNull
+	@NotEmpty
+	private long timeCreated;
+	@NotNull
+	@NotEmpty
+	private long timeModified;
 
-    public MMOMoneyDB() {
-        timeCreated = System.currentTimeMillis();
-        timeModified = System.currentTimeMillis();
-    }
+	public MMOMoneyDB() {
+		timeCreated = System.currentTimeMillis();
+		timeModified = System.currentTimeMillis();
+	}
 
-    public long getAccountId() {
-        return accountId;
-    }
+	public long getAccountId() {
+		return accountId;
+	}
 
-    public long getAmount() {
-        return amount;
-    }
+	public long getAmount() {
+		return amount;
+	}
 
-    public void setAmount(long amount) {
-        this.amount = amount;
-        timeModified = System.currentTimeMillis();
-    }
+	public void setAmount(long amount) {
+		this.amount = amount;
+		timeModified = System.currentTimeMillis();
+	}
 
-    public String getOwner() {
-        return owner;
-    }
+	public String getOwner() {
+		return owner;
+	}
 
-    public void setOwner(String owner) {
-        this.owner = owner;
-        timeModified = System.currentTimeMillis();
-    }
+	public void setOwner(String owner) {
+		this.owner = owner;
+		timeModified = System.currentTimeMillis();
+	}
 
-    public long getTimeCreated() {
-        return timeCreated;
-    }
+	public long getTimeCreated() {
+		return timeCreated;
+	}
 
-    public long getTimeModified() {
-        return timeModified;
-    }
+	public long getTimeModified() {
+		return timeModified;
+	}
 }
