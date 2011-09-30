@@ -24,6 +24,7 @@ import mmo.Core.MMOPlugin;
 import mmo.Core.util.EnumBitSet;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
@@ -44,24 +45,32 @@ public class MMOMoney extends MMOPlugin {
     protected static String templateDatabaseRefresh = "&fThe Database has been refreshed.";
     protected static long cfgNewAccountMoney = 60;
     protected static long cfgKeepInMemoryFor = 60;
-    
-	@Override
-	public EnumBitSet mmoSupport(EnumBitSet support) {
-		support.set(Support.MMO_DATABASE);
-		return support;
-	}
 
-	@Override
+    @Override
+    public EnumBitSet mmoSupport(EnumBitSet support) {
+        support.set(Support.MMO_DATABASE);
+        support.set(Support.MMO_PLAYER);
+        return support;
+    }
+
+    @Override
     public void onEnable() {
         super.onEnable();
-        
+
         MMOMoneyAPI.pluginInstance = this;
+
+        MMOMoneyAPI.createAccount("SERVER");
     }
-    
+
+    @Override
+    public void onDisable() {
+        super.onDisable();
+    }
+
     @Override
     public void loadConfiguration(Configuration cfg) {
-        cfgNewAccountMoney = cfg.getInt("account.newmoney", (int)cfgNewAccountMoney);
-        cfgKeepInMemoryFor = cfg.getInt("account.keepmemory", (int)cfgKeepInMemoryFor);
+        cfgNewAccountMoney = cfg.getInt("account.newmoney", (int) cfgNewAccountMoney);
+        cfgKeepInMemoryFor = cfg.getInt("account.keepmemory", (int) cfgKeepInMemoryFor);
         /* Will be in the i18n implementation for mmoCore
          * DO NOT UNCOMMENT
         templateNoPermission = cfg.getString("i18n.NoPermission", templateNoPermission);
@@ -79,11 +88,6 @@ public class MMOMoney extends MMOPlugin {
     }
 
     @Override
-    public void onDisable() {
-        super.onDisable();
-    }
-
-    @Override
     public List<Class<?>> getDatabaseClasses() {
         List<Class<?>> list = new ArrayList<Class<?>>();
         list.add(MMOMoneyDB.class);
@@ -93,308 +97,100 @@ public class MMOMoney extends MMOPlugin {
 
     @Override
     public boolean onCommand(CommandSender cs, Command cmd, String label, String[] args) {
- /*       args = MMO.smartSplit(MMO.join(args, " "));
+        args = MMO.smartSplit(MMO.join(args, " "));
         String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
         if (args.length == 0) {
-              return onCommand_Get(cs, cmd, label, newArgs);
+            args = new String[1];
+            args[0] = "get";
+        }
+
+        if (args[0].equalsIgnoreCase("info")) {
+            onCommand_info(cs, cmd, label, newArgs);
+        } else if (args[0].equalsIgnoreCase("get")) {
+        } else if (args[0].equalsIgnoreCase("set")) {
+        } else if (args[0].equalsIgnoreCase("take")) {
+        } else if (args[0].equalsIgnoreCase("give")) {
+        } else if (args[0].equalsIgnoreCase("drop")) {
+        } else if (args[0].equalsIgnoreCase("admin")) {
         } else {
-            if (args[0].equalsIgnoreCase("stats")) {
-                  return onCommand_Stats(cs, cmd, label, newArgs);
-            } else if (args[0].equalsIgnoreCase("get")) {
-                  return onCommand_Get(cs, cmd, label, newArgs);
-            } else if (args[0].equalsIgnoreCase("set")) {
-                  return onCommand_Set(cs, cmd, label, newArgs);
-            } else if (args[0].equalsIgnoreCase("take")) {
-                  return onCommand_Take(cs, cmd, label, newArgs);
-            } else if (args[0].equalsIgnoreCase("give")) {
-                  return onCommand_Give(cs, cmd, label, newArgs);
-            } else if (args[0].equalsIgnoreCase("admin")) {
-                  return onCommand_Admin(cs, cmd, label, newArgs);
-            } else {
-                */sendMessage(cs, templateSyntaxError, label, "<stats|get|set|take|give|drop|admin>");/*
-            }
-        }*/
+            sendMessage(cs, templateSyntaxError, label, "<info|get|set|take|give|drop|admin>");
+        }
+
         return true;
     }
 
-/*    public boolean onCommand_Stats(CommandSender cs, Command cmd, String label, String[] args) {
-        sendMessage(cs, "&f%s v%s - &6%s&f -", this.getDescription().getName(), this.getDescription().getVersion(), this.getDescription().getWebsite());
-        return true;
-    }
-
-    private boolean onCommand_Get(CommandSender cs, Command cmd, String label, String[] args) {
-        String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
-
+    public boolean onCommand_info(CommandSender cs, Command cmd, String label, String[] args) {
         if (args.length == 0) {
-            return onCommand_Get_Own(cs, cmd, label, newArgs);
-        } else if (args.length == 1) {
-            return onCommand_Get_Other(cs, cmd, label, newArgs);
+            sendMessage(cs, "&f%s v%s -&6%s&f -", this.getDescription().getName(), this.getDescription().getVersion(), this.getDescription().getWebsite());
+            sendMessage(cs, "&7Coded by: %s", this.getDescription().getAuthors());
         } else {
-            sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "get <player>");
+            sendMessage(cs, templateSyntaxError, label, "info");
         }
         return true;
     }
 
-    private boolean onCommand_Get_Own(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.get.own")) {
-            String chkAccount = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER"; //If it's the console, set it to SERVER
-            DISABLED_Account aCheck = api.getAccount(chkAccount);
-            if (aCheck != null) {
-                String amount = String.valueOf(aCheck.getMoney());
-                sendMessage(cs, DISABLED_Money.templateGetOwn, amount, DISABLED_Money.templateCurrency);
-            } else {
-                sendMessage(cs, DISABLED_Money.templateAccountInvalid, chkAccount);
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }
-
-    private boolean onCommand_Get_Other(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.get.other")) {
-            String chkAccount = args[0];
-            DISABLED_Account aCheck = api.getAccount(chkAccount);
-            if (aCheck != null) {
-                String amount = String.valueOf(aCheck.getMoney());
-                sendMessage(cs, DISABLED_Money.templateGetOther, aCheck.getOwner(), amount, DISABLED_Money.templateCurrency);
-            } else {
-                sendMessage(cs, DISABLED_Money.templateAccountInvalid, chkAccount);
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }
-
-    private boolean onCommand_Set(CommandSender cs, Command cmd, String label, String[] args) {
+    public boolean onCommand_get(CommandSender cs, Command cmd, String label, String[] args) {
         String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
 
-        if (args.length == 1) {
-            return onCommand_Set_Own(cs, cmd, label, newArgs);
-        } else if (args.length == 2) {
-            return onCommand_Set_Other(cs, cmd, label, newArgs);
+        if (args.length == 1) { //Own
+            onCommand_get_own(cs, cmd, label, newArgs);
+        } else if (args.length == 2) { //Other
+            onCommand_get_other(cs, cmd, label, newArgs);
         } else {
-            sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "set <player|amount> (amount)");
+            sendMessage(cs, templateSyntaxError, label, "get <name>");
         }
+
         return true;
     }
 
-    private boolean onCommand_Set_Own(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.set.own")) {
-            String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-            String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-            DISABLED_Account aTo = api.getAccount(to);
-            if (aTo == null) {
-                sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
-            } else {
-                Long amount = Long.parseLong(args[0]);
-                TransactionDB tdb = aTo.setMoney(amount);
-                tdb.setReason("/" + label + " set " + String.valueOf(amount) + " called by " + from);
-                if (tdb.isFailed()) {
-                    sendMessage(cs, "ERRORCODE: ChatCallSetOwnTDBFail, please notify a Developer");
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateSetOwn, String.valueOf(amount), DISABLED_Money.templateCurrency);
-                }
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_get_own(CommandSender cs, Command cmd, String label, String[] args) {
+        MMOAccount userAccount = MMOMoneyAPI.getAccount(cs.getName());
+        
         return true;
     }
 
-    private boolean onCommand_Set_Other(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.set.other")) {
-            String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-            String to = args[0];
-            DISABLED_Account aTo = api.getAccount(to);
-            if (aTo == null) {
-                sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
-            } else {
-                Long amount = Long.parseLong(args[1]);
-                TransactionDB tdb = aTo.setMoney(amount);
-                tdb.setReason("/" + label + " set " + to + " " + String.valueOf(amount) + " called by " + from);
-                if (tdb.isFailed()) {
-                    sendMessage(cs, "ERRORCODE: ChatCallSetOtherTDBFail, please notify a Developer");
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateSetOther, aTo.getOwner(), String.valueOf(amount), DISABLED_Money.templateCurrency);
-                }
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_get_other(CommandSender cs, Command cmd, String label, String[] args) {
         return true;
     }
 
-    private boolean onCommand_Take(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.take")) {
-            if (args.length == 2) {
-                String from = args[0];
-                String to = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-                Long amount = Long.parseLong(args[1]);
-
-                DISABLED_Account aFrom = api.getAccount(from);
-                DISABLED_Account aTo = api.getAccount(to);
-                if (aFrom == null) {
-                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, from);
-                }
-                if (aTo == null) {
-                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
-                }
-                TransactionDB tdb = aFrom.transferMoney(aTo, amount);
-                tdb.setReason("/" + label + " take " + from + " " + String.valueOf(amount) + " called by " + to);
-                if (tdb.isFailed()) {
-                    sendMessage(cs, "ERRORCODE: ChatCallTakeTDBFail, please notify a Developer");
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateTake, String.valueOf(amount), DISABLED_Money.templateCurrency, aFrom.getOwner());
-                }
-            } else {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "take <player> <amount>");
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_set(CommandSender cs, Command cmd, String label, String[] args) {
         return true;
     }
 
-    private boolean onCommand_Give(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.give")) {
-            if (args.length == 2) {
-                String from = (cs instanceof Player) ? ((Player) cs).getName() : "SERVER";
-                String to = args[0];
-                Long amount = Long.parseLong(args[1]);
-
-                DISABLED_Account aFrom = api.getAccount(from);
-                DISABLED_Account aTo = api.getAccount(to);
-                if (aFrom == null) {
-                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, from);
-                }
-                if (aTo == null) {
-                    sendMessage(cs, DISABLED_Money.templateAccountInvalid, to);
-                }
-                TransactionDB tdb = aFrom.transferMoney(aTo, amount);
-                tdb.setReason("/" + label + " give " + from + " " + String.valueOf(amount) + " called by " + from);
-                if (tdb.isFailed()) {
-                    sendMessage(cs, "ERRORCODE: ChatCallGiveTDBFail, please notify a Developer");
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateGive, aTo.getOwner(), String.valueOf(amount), DISABLED_Money.templateCurrency);
-                }
-            } else {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "give <player> <amount>");
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_take(CommandSender cs, Command cmd, String label, String[] args) {
         return true;
     }
 
-    private boolean onCommand_Admin(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin")) {
-            String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
-            if (args.length == 0) {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin <account|database>");
-            } else {
-                if (args[0].equalsIgnoreCase("account")) {
-                    return onCommand_Admin_Account(cs, cmd, label, newArgs);
-                } else if (args[0].equalsIgnoreCase("database")) {
-                    return onCommand_Admin_Database(cs, cmd, label, newArgs);
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin <account|database>");
-                }
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_give(CommandSender cs, Command cmd, String label, String[] args) {
         return true;
     }
 
-    private boolean onCommand_Admin_Account(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin.account")) {
-            String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
-            if (args.length == 0) {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
-            } else {
-                if (args[0].equals("list")) {
-                    return onCommand_Admin_Account_List(cs, cmd, label, newArgs);
-                } else if (args[0].equals("create")) {
-                    return onCommand_Admin_Account_Create(cs, cmd, label, newArgs);
-                } else if (args[0].equals("remove")) {
-                    return onCommand_Admin_Account_Remove(cs, cmd, label, newArgs);
-                } else if (args[0].equals("reset")) {
-                    return onCommand_Admin_Account_Reset(cs, cmd, label, newArgs);
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin account <list|create|reset|remove>");
-                }
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
+    public boolean onCommand_admin(CommandSender cs, Command cmd, String label, String[] args) {
         return true;
     }
-
-    private boolean onCommand_Admin_Account_List(CommandSender cs, Command cmd, String label, String[] args) {
-        return false;
-    }
-
-    private boolean onCommand_Admin_Account_Create(CommandSender cs, Command cmd, String label, String[] args) {
-        return false;
-    }
-
-    private boolean onCommand_Admin_Account_Remove(CommandSender cs, Command cmd, String label, String[] args) {
-        return false;
-    }
-
-    private boolean onCommand_Admin_Account_Reset(CommandSender cs, Command cmd, String label, String[] args) {
-        return false;
-    }
-
-    private boolean onCommand_Admin_Database(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin.database")) {
-            String[] newArgs = (args.length > 0) ? (Arrays.copyOfRange(args, 1, args.length)) : (new String[0]);
-            if (args.length == 0) {
-                sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
-            } else {
-                if (args[0].equals("purge")) {
-                    return onCommand_Admin_Database_Purge(cs, cmd, label, newArgs);
-                } else if (args[0].equals("empty")) {
-                    return onCommand_Admin_Database_Empty(cs, cmd, label, newArgs);
-                } else if (args[0].equals("refresh")) {
-                    return onCommand_Admin_Database_Refresh(cs, cmd, label, newArgs);
-                } else {
-                    sendMessage(cs, DISABLED_Money.templateSyntaxError, label, "admin database <purge|empty|refresh>");
-                }
-            }
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }
-
-    private boolean onCommand_Admin_Database_Purge(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin.database.purge")) {
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }
-
-    private boolean onCommand_Admin_Database_Empty(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin.database.empty")) {
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }
-
-    private boolean onCommand_Admin_Database_Refresh(CommandSender cs, Command cmd, String label, String[] args) {
-        if (cs.hasPermission("mmomoney.admin.database.refresh")) {
-            getDatabase().refresh(MoneyDB.class);
-            getDatabase().refresh(TransactionDB.class);
-            sendMessage(cs, DISABLED_Money.templateDatabaseRefresh);
-        } else {
-            sendMessage(cs, DISABLED_Money.templateNoPermission);
-        }
-        return true;
-    }*/
+    /*
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}
+    public boolean onCommand_(CommandSender cs, Command cmd, String label, String[] args) {}*/
 }

@@ -31,6 +31,14 @@ public class MMOAccount {
             return false;
         }
     }
+    
+    public String getOwner() {
+        if (exists()) {
+            return linkedAccount.getOwner();
+        } else {
+            throw new NullPointerException();
+        }
+    }
 
     public boolean hasEnough(long checkAmount) {
         if (exists()) {
