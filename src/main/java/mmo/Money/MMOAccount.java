@@ -94,6 +94,10 @@ public class MMOAccount {
     }
     
     public void delete() {
-        MMOMoneyAPI.deleteAccount(this);
+        if (exists()) {
+            MMOMoneyAPI.deleteAccount(this);
+        } else {
+            throw new NullPointerException();
+        }
     }
 }
