@@ -3,7 +3,7 @@ main: mmo.Money.MMOMoney
 version: 0.1
 website: http://levelnull.de/
 author: Xaymar <MichaelDirks@levelnull.de>
-depend: [mmoCore]
+depend: [Spout,mmoCore]
 
 description: mmoMoney
 
