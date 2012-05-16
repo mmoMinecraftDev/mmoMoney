@@ -1,7 +1,7 @@
 /*
- * This file is part of mmoMinecraft (https://github.com/mmoMinecraftDev).
+ * This file is part of mmoMoney <http://github.com/mmoMinecraftDev/mmoMoney>.
  *
- * mmoMinecraft is free software: you can redistribute it and/or modify
+ * mmoMoney is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -19,7 +19,6 @@ package mmo.Money;
 import java.util.ArrayList;
 
 public class MMOMoneyAPI {
-
 	protected static MMOMoney pluginInstance;
 	protected static ArrayList<MMOMoneyDB> loadedAccounts = new ArrayList<MMOMoneyDB>();
 

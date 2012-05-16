@@ -1,179 +1,179 @@
 name: mmoMoney
-main: mmo.Money.MMOMoney
-version: 0.1
-website: http://levelnull.de/
-author: Xaymar <MichaelDirks@levelnull.de>
-depend: [Spout,mmoCore]
+version: ${releaseVersion} b${buildNumber}
+description: An economy plugin for the mmoMinecraft suite.
+author: mmoMinecraftDev
+website: http://mmo.me.uk
 
-description: mmoMoney
+main: mmo.Money.MMOMoney
+depend: [Spout, mmoCore]
 
 commands:
-  money:
-    description: 
-    aliases: [cash,econ]
+    money:
+        description: 
+        aliases: [cash, econ]
 
 permissions:
-  mmomoney.*:
-    default: false
-    children:
-      mmomoney.account: true
-      mmomoney.get: true
-      mmomoney.get.own: true
-      mmomoney.get.other: true
-      mmomoney.set: true
-      mmomoney.set.own: true
-      mmomoney.set.other: true
-      mmomoney.take: true
-      mmomoney.give: true
-      mmomoney.drop: true
-      mmomoney.admin: true
-      mmomoney.admin.account: true
-      mmomoney.admin.account.list: true
-      mmomoney.admin.account.create: true
-      mmomoney.admin.account.reset: true
-      mmomoney.admin.account.remove: true
-      mmomoney.admin.database: true
-      mmomoney.admin.database.purge: true
-      mmomoney.admin.database.empty: true
-      mmomoney.admin.database.refresh: true
-  mmomoney.get.*:
-    default: false
-    children:
-      mmomoney.get.own: true
-      mmomoney.get.other: true
-  mmomoney.set.*:
-    default: false
-    children:
-      mmomoney.set.own: true
-      mmomoney.set.other: true
-  mmomoney.admin.*:
-    default: false
-    children:
-      mmomoney.admin: true
-      mmomoney.admin.account: true
-      mmomoney.admin.account.list: true
-      mmomoney.admin.account.create: true
-      mmomoney.admin.account.reset: true
-      mmomoney.admin.account.remove: true
-      mmomoney.admin.database: true
-      mmomoney.admin.database.purge: true
-      mmomoney.admin.database.empty: true
-      mmomoney.admin.database.refresh: true
-  mmomoney.admin.account.*:
-    default: false
-    children:
-      mmomoney.admin.account: true
-      mmomoney.admin.account.list: true
-      mmomoney.admin.account.create: true
-      mmomoney.admin.account.reset: true
-      mmomoney.admin.account.remove: true
-  mmomoney.admin.database.*:
-    default: false
-    children:
-      mmomoney.admin.database: true
-      mmomoney.admin.database.purge: true
-      mmomoney.admin.database.empty: true
-      mmomoney.admin.database.refresh: true
-  mmomoney.rightsset.user:
-    default: false
-    children:
-      mmomoney.account: true
-      mmomoney.get.own: true
-      mmomoney.give: true
-      mmomoney.drop: true
-  mmomoney.rightsset.mod:
-    default: false
-    children:
-      mmomoney.account: true
-      mmomoney.get.own: true
-      mmomoney.get.other: true
-      mmomoney.set.own: true
-      mmomoney.give: true
-      mmomoney.take: true
-      mmomoney.drop: true
-      mmomoney.admin: true
-      mmomoney.admin.account: true
-      mmomoney.admin.account.list: true
-      mmomoney.admin.account.reset: true
-      mmomoney.admin.database: true
-      mmomoney.admin.database.purge: true
-      mmomoney.admin.database.refresh: true
-  mmomoney.rightsset.admin:
-    default: false
-    children:
-      mmomoney.account: true
-      mmomoney.get.own: true
-      mmomoney.get.other: true
-      mmomoney.set.own: true
-      mmomoney.set.other: true
-      mmomoney.give: true
-      mmomoney.take: true
-      mmomoney.drop: true
-      mmomoney.admin: true
-      mmomoney.admin.account: true
-      mmomoney.admin.account.list: true
-      mmomoney.admin.account.create: true
-      mmomoney.admin.account.reset: true
-      mmomoney.admin.account.remove: true
-      mmomoney.admin.database: true
-      mmomoney.admin.database.empty: true
-      mmomoney.admin.database.purge: true
-      mmomoney.admin.database.refresh: true
-  mmomoney.account:
-    description: "Allow the player to have an Account(necessary for 'take' 'give' 'drop';ignored by 'account create')"
-    default: true
-  mmomoney.get.own:
-    description: "Allow the player to see the content of his moneybag"
-    default: true
-  mmomoney.get.other:
-    description: "Allow the player to see the content of someones moneybag (includes own)"
-    default: op
-    children:
-      mmomoney.get.own: true
-  mmomoney.set.own:
-    description: "Allow the player to magically make content appear in his moneybag"
-    default: op
-  mmomoney.set.other:
-    description: "Allow the player to magically make content appear in someones moneybag (Includes own)"
-    default: op
-    children:
-      mmomoney.set.own: true
-  mmomoney.take:
-    description: "Allow the player to take the content from someones moneybag"
-    default: op
-  mmomoney.give:
-    description: "Allow the player to give content from his moneybag to someone"
-    default: true
-  mmomoney.drop:
-    description: "Allow the player to drop content from his moneybag"
-    default: true
-  mmomoney.admin:
-    description: "Allow the player to use the admin commandset"
-    default: op
-  mmomoney.admin.account:
-    description: "Allow the player to use the account commandset"
-    default: op
-  mmomoney.admin.account.list:
-    description: "Allow the player to list all accounts ever created"
-    default: op
-  mmomoney.admin.account.create:
-    description: "Allow the player to create new accounts(not usually needed)"
-    default: op
-  mmomoney.admin.account.reset:
-    description: "Allow the player to reset accounts(resets them to default)"
-    default: op
-  mmomoney.admin.account.remove:
-    description: "Allow the player to remove accounts(not usually needed)"
-    default: op
-  mmomoney.admin.database:
-    description: "Allow the player to use the database commandset"
-    default: op
-  mmomoney.admin.database.purge:
-    description: "Allow the player to purge accounts(unused for 30 days, still at default. DON'T DO THIS WHILE PLAYERS ARE ONLINE)"
-    default: op
-  mmomoney.admin.database.empty:
-    description: "Allow the player to empty the database completely(Removes all accounts and Transactions. HIGHLY DISADVISED TO EVER GRANT ANYONE TO DO THIS)"
-    default: false
-  mmomoney.admin.database.refresh:
-    description: "Allow the player to refresh the database(Writes current changes and reloads all accounts from database, safe to give anyone who wants)"
-    default: op
+    mmo.money.*:
+        default: false
+        children:
+            mmo.money.account: true
+            mmo.money.get: true
+            mmo.money.get.own: true
+            mmo.money.get.other: true
+            mmo.money.set: true
+            mmo.money.set.own: true
+            mmo.money.set.other: true
+            mmo.money.take: true
+            mmo.money.give: true
+            mmo.money.drop: true
+            mmo.money.admin: true
+            mmo.money.admin.account: true
+            mmo.money.admin.account.list: true
+            mmo.money.admin.account.create: true
+            mmo.money.admin.account.reset: true
+            mmo.money.admin.account.remove: true
+            mmo.money.admin.database: true
+            mmo.money.admin.database.purge: true
+            mmo.money.admin.database.empty: true
+            mmo.money.admin.database.refresh: true
+    mmo.money.get.*:
+        default: false
+        children:
+            mmo.money.get.own: true
+            mmo.money.get.other: true
+    mmo.money.set.*:
+        default: false
+        children:
+            mmo.money.set.own: true
+            mmo.money.set.other: true
+    mmo.money.admin.*:
+        default: false
+        children:
+            mmo.money.admin: true
+            mmo.money.admin.account: true
+            mmo.money.admin.account.list: true
+            mmo.money.admin.account.create: true
+            mmo.money.admin.account.reset: true
+            mmo.money.admin.account.remove: true
+            mmo.money.admin.database: true
+            mmo.money.admin.database.purge: true
+            mmo.money.admin.database.empty: true
+            mmo.money.admin.database.refresh: true
+    mmo.money.admin.account.*:
+        default: false
+        children:
+            mmo.money.admin.account: true
+            mmo.money.admin.account.list: true
+            mmo.money.admin.account.create: true
+            mmo.money.admin.account.reset: true
+            mmo.money.admin.account.remove: true
+    mmo.money.admin.database.*:
+        default: false
+        children:
+            mmo.money.admin.database: true
+            mmo.money.admin.database.purge: true
+            mmo.money.admin.database.empty: true
+            mmo.money.admin.database.refresh: true
+    mmo.money.rightsset.user:
+        default: false
+        children:
+            mmo.money.account: true
+            mmo.money.get.own: true
+            mmo.money.give: true
+            mmo.money.drop: true
+    mmo.money.rightsset.mod:
+        default: false
+        children:
+            mmo.money.account: true
+            mmo.money.get.own: true
+            mmo.money.get.other: true
+            mmo.money.set.own: true
+            mmo.money.give: true
+            mmo.money.take: true
+            mmo.money.drop: true
+            mmo.money.admin: true
+            mmo.money.admin.account: true
+            mmo.money.admin.account.list: true
+            mmo.money.admin.account.reset: true
+            mmo.money.admin.database: true
+            mmo.money.admin.database.purge: true
+            mmo.money.admin.database.refresh: true
+    mmo.money.rightsset.admin:
+        default: false
+        children:
+            mmo.money.account: true
+            mmo.money.get.own: true
+            mmo.money.get.other: true
+            mmo.money.set.own: true
+            mmo.money.set.other: true
+            mmo.money.give: true
+            mmo.money.take: true
+            mmo.money.drop: true
+            mmo.money.admin: true
+            mmo.money.admin.account: true
+            mmo.money.admin.account.list: true
+            mmo.money.admin.account.create: true
+            mmo.money.admin.account.reset: true
+            mmo.money.admin.account.remove: true
+            mmo.money.admin.database: true
+            mmo.money.admin.database.empty: true
+            mmo.money.admin.database.purge: true
+            mmo.money.admin.database.refresh: true
+    mmo.money.account:
+        description: "Allow the player to have an Account(necessary for 'take' 'give' 'drop';ignored by 'account create')"
+        default: true
+    mmo.money.get.own:
+        description: "Allow the player to see the content of his moneybag"
+        default: true
+    mmo.money.get.other:
+        description: "Allow the player to see the content of someones moneybag (includes own)"
+        default: op
+        children:
+            mmo.money.get.own: true
+    mmo.money.set.own:
+        description: "Allow the player to magically make content appear in his moneybag"
+        default: op
+    mmo.money.set.other:
+        description: "Allow the player to magically make content appear in someones moneybag (Includes own)"
+        default: op
+        children:
+            mmo.money.set.own: true
+    mmo.money.take:
+        description: "Allow the player to take the content from someones moneybag"
+        default: op
+    mmo.money.give:
+        description: "Allow the player to give content from his moneybag to someone"
+        default: true
+    mmo.money.drop:
+        description: "Allow the player to drop content from his moneybag"
+        default: true
+    mmo.money.admin:
+        description: "Allow the player to use the admin commandset"
+        default: op
+    mmo.money.admin.account:
+        description: "Allow the player to use the account commandset"
+        default: op
+    mmo.money.admin.account.list:
+        description: "Allow the player to list all accounts ever created"
+        default: op
+    mmo.money.admin.account.create:
+        description: "Allow the player to create new accounts(not usually needed)"
+        default: op
+    mmo.money.admin.account.reset:
+        description: "Allow the player to reset accounts(resets them to default)"
+        default: op
+    mmo.money.admin.account.remove:
+        description: "Allow the player to remove accounts(not usually needed)"
+        default: op
+    mmo.money.admin.database:
+        description: "Allow the player to use the database commandset"
+        default: op
+    mmo.money.admin.database.purge:
+        description: "Allow the player to purge accounts(unused for 30 days, still at default. DON'T DO THIS WHILE PLAYERS ARE ONLINE)"
+        default: op
+    mmo.money.admin.database.empty:
+        description: "Allow the player to empty the database completely(Removes all accounts and Transactions. HIGHLY DISADVISED TO EVER GRANT ANYONE TO DO THIS)"
+        default: false
+    mmo.money.admin.database.refresh:
+        description: "Allow the player to refresh the database(Writes current changes and reloads all accounts from database, safe to give anyone who wants)"
+        default: op

@@ -1,7 +1,7 @@
 /*
- * This file is part of mmoMinecraft (https://github.com/mmoMinecraftDev).
+ * This file is part of mmoMoney <http://github.com/mmoMinecraftDev/mmoMoney>.
  *
- * mmoMinecraft is free software: you can redistribute it and/or modify
+ * mmoMoney is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -16,8 +16,6 @@
  */
 package mmo.Money;
 
-import com.avaje.ebean.validation.NotEmpty;
-import com.avaje.ebean.validation.NotNull;
 import java.io.Serializable;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -25,10 +23,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.avaje.ebean.validation.NotEmpty;
+import com.avaje.ebean.validation.NotNull;
+
 @Entity()
 @Table(name = "mmo_Transaction")
 public class MMOTransactionDB implements Serializable {
-
 	@Id
 	private long transactionId;
 	@NotNull

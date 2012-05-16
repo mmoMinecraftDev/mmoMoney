@@ -1,7 +1,7 @@
 /*
- * This file is part of mmoMinecraft (https://github.com/mmoMinecraftDev).
+ * This file is part of mmoMoney <http://github.com/mmoMinecraftDev/mmoMoney>.
  *
- * mmoMinecraft is free software: you can redistribute it and/or modify
+ * mmoMoney is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -19,16 +19,17 @@ package mmo.Money;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import mmo.Core.MMO;
 import mmo.Core.MMOPlugin;
 import mmo.Core.util.EnumBitSet;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 public class MMOMoney extends MMOPlugin {
-
 	protected static Configuration cfg;
 	protected static String templateNoPermission = "&cYou don't have permission to do this!";
 	protected static String templateSyntaxError = "&fSyntax is &6/%s %s";
