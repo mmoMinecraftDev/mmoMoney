@@ -1,5 +1,5 @@
 name: mmoMoney
-version: ${releaseVersion} b${buildNumber}
+version: ${releaseVersion}.${buildNumber}
 description: An economy plugin for the mmoMinecraft suite.
 author: mmoMinecraftDev
 website: http://mmo.me.uk
